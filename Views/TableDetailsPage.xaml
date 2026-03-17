@@ -2,10 +2,10 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WaiterApp.Views.TableDetailsPage"
-             Title="Table Details">
+             BackgroundColor="{x:StaticResource BackGroundGray}">
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="16">
-            <Frame>
+            <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}">
                 <VerticalStackLayout Spacing="8">
                     <Label Text="Current Order" FontAttributes="Bold" FontSize="22" />
                     <Label Text="{Binding CurrentOrderLabel}" />
@@ -13,7 +13,7 @@
                 </VerticalStackLayout>
             </Frame>
 
-            <Frame>
+            <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}">
                 <VerticalStackLayout Spacing="12">
                     <Label Text="Add Items" FontAttributes="Bold" FontSize="22" />
 
@@ -37,7 +37,7 @@
                 </VerticalStackLayout>
             </Frame>
 
-            <Frame>
+            <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}">
                 <VerticalStackLayout Spacing="12">
                     <Label Text="Checkout" FontAttributes="Bold" FontSize="22" />
                     <Button Text="Mark Ready To Pay" Command="{Binding MarkReadyCommand}" />

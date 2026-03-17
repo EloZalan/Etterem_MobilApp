@@ -2,11 +2,12 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WaiterApp.Views.TablesPage"
-             Title="My Tables">
+             
+             BackgroundColor="{x:StaticResource BackGroundGray}">
     <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="20">
         <VerticalStackLayout Grid.Row="0" Spacing="4">
-            <Label Text="Assigned Tables" FontSize="28" FontAttributes="Bold" />
-            <Label Text="{Binding WaiterName, StringFormat='Logged in as: {0}'}" TextColor="Gray" />
+            <Label Text="Assigned Tables" FontSize="28" FontAttributes="Bold" TextColor="White"/>
+            <Label Text="{Binding WaiterName, StringFormat='Logged in as: {0}'}" TextColor="White" />
         </VerticalStackLayout>
 
         <HorizontalStackLayout Grid.Row="1" Spacing="12" Margin="0,16,0,16" HorizontalOptions="Fill">
@@ -19,7 +20,7 @@
         <CollectionView Grid.Row="2" ItemsSource="{Binding Tables}" SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame>
+                    <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}">
                         <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
                             <Label Text="{Binding DisplayName}" FontAttributes="Bold" FontSize="20" />
                             <Label Grid.Row="1" Text="{Binding Subtitle}" TextColor="Gray" />
