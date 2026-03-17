@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WaiterApp.Views.TablesPage"
+             Title="My Tables">
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="20">
+        <VerticalStackLayout Grid.Row="0" Spacing="4">
+            <Label Text="Assigned Tables" FontSize="28" FontAttributes="Bold" />
+            <Label Text="{Binding WaiterName, StringFormat='Logged in as: {0}'}" TextColor="Gray" />
+        </VerticalStackLayout>
+
+        <HorizontalStackLayout Grid.Row="1" Spacing="12" Margin="0,16,0,16">
+            <Button Text="Refresh" Command="{Binding LoadCommand}" HorizontalOptions="Fill" />
+            <Button Text="Logout" Command="{Binding LogoutCommand}" HorizontalOptions="Fill" />
+        </HorizontalStackLayout>
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Tables}" SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame>
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                            <Label Text="{Binding DisplayName}" FontAttributes="Bold" FontSize="20" />
+                            <Label Grid.Row="1" Text="{Binding Subtitle}" TextColor="Gray" />
+                            <Button Grid.Column="1" Grid.RowSpan="2"
+                                    Text="Open"
+                                    VerticalOptions="Center"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenTableCommand}"
+                                    CommandParameter="{Binding .}"/>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Label Grid.Row="3" Text="{Binding StatusMessage}" TextColor="Gray" />
+    </Grid>
+</ContentPage>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WaiterApp.Views.TableDetailsPage"
+             Title="Table Details">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="16">
+            <Frame>
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Current Order" FontAttributes="Bold" FontSize="22" />
+                    <Label Text="{Binding CurrentOrderLabel}" />
+                    <Button Text="Open Order" Command="{Binding OpenOrderCommand}" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame>
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Add Items" FontAttributes="Bold" FontSize="22" />
+
+                    <Picker Title="Category"
+                            ItemsSource="{Binding Categories}"
+                            ItemDisplayBinding="{Binding Name}"
+                            SelectedItem="{Binding SelectedCategory}" />
+
+                    <Picker Title="Menu Item"
+                            ItemsSource="{Binding MenuItems}"
+                            ItemDisplayBinding="{Binding Name}"
+                            SelectedItem="{Binding SelectedMenuItem}" />
+
+                    <HorizontalStackLayout Spacing="12" VerticalOptions="Center">
+                        <Button Text="-" WidthRequest="50" Command="{Binding DecreaseQuantityCommand}" />
+                        <Label Text="{Binding Quantity}" VerticalTextAlignment="Center" FontSize="18" />
+                        <Button Text="+" WidthRequest="50" Command="{Binding IncreaseQuantityCommand}" />
+                    </HorizontalStackLayout>
+
+                    <Button Text="Add To Order" Command="{Binding AddItemCommand}" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame>
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Checkout" FontAttributes="Bold" FontSize="22" />
+                    <Button Text="Mark Ready To Pay" Command="{Binding MarkReadyCommand}" />
+                    <HorizontalStackLayout Spacing="12">
+                        <Button Text="Pay Cash" Command="{Binding PayCashCommand}" HorizontalOptions="FillAndExpand" />
+                        <Button Text="Pay Card" Command="{Binding PayCardCommand}" HorizontalOptions="FillAndExpand" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Label Text="{Binding StatusMessage}" TextColor="Gray" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
