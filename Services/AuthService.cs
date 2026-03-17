@@ -45,6 +45,16 @@ public class AuthService : IAuthService
 
     public async Task LogoutAsync()
     {
+        // Try to revoke the server token first. If server call fails, still clear local state.
+        try
+        {
+            await _apiService.LogoutAsync();
+        }
+        catch
+        {
+            // Intentionally swallow; local logout should proceed regardless of remote result.
+        }
+
         Token = null;
         CurrentUser = null;
         _apiService.SetToken(null);

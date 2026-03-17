@@ -15,5 +15,6 @@ public interface IApiService
     Task<PaymentResponse> PayOrderAsync(int orderId, PayOrderRequest request);
     Task DropShiftAsync(); 
     Task TakeShiftAsync();
+    Task LogoutAsync();
     void SetToken(string? token);
 }

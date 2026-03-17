@@ -138,6 +138,18 @@ public class ApiService : IApiService
         await EnsureSuccessWithMessage(response, "Take shift failed.");
     }
 
+    public async Task LogoutAsync()
+    {
+        // Attempt to notify the server and revoke the token. Let server failures surface to the caller.
+        var request = new HttpRequestMessage(HttpMethod.Post, "logout");
+        var response = await _httpClient.SendAsync(request);
+
+        Console.WriteLine($"LOGOUT STATUS: {(int)response.StatusCode} {response.StatusCode}");
+        Console.WriteLine($"LOGOUT BODY: {await response.Content.ReadAsStringAsync()}");
+
+        await EnsureSuccessWithMessage(response, "Logout failed.");
+    }
+
     private async Task<HttpResponseMessage> PostAsync<T>(string uri, T data, bool requiresSuccess = true)
     {
         var json = JsonSerializer.Serialize(data, _jsonOptions);
