@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Text;
 using System.Windows.Input;
 using WaiterApp.Models;
 using WaiterApp.Services;
@@ -20,6 +21,8 @@ public class TablesViewModel : BaseViewModel
         Tables = new ObservableCollection<RestaurantTable>();
         LoadCommand = new Command(async () => await LoadAsync());
         LogoutCommand = new Command(async () => await LogoutAsync());
+        DropShiftCommand = new Command(async () => await DropShiftAsync());
+        TakeShiftCommand = new Command(async () => await TakeShiftAsync());
         OpenTableCommand = new Command<RestaurantTable>(async table => await OpenTableAsync(table));
     }
 
@@ -35,10 +38,18 @@ public class TablesViewModel : BaseViewModel
 
     public ICommand LoadCommand { get; }
     public ICommand LogoutCommand { get; }
+    public ICommand DropShiftCommand { get; }
+    public ICommand TakeShiftCommand { get; }
     public ICommand OpenTableCommand { get; }
 
+    public class ApiError
+    {
+        public string Message { get; set; } = string.Empty;
+    }
     public async Task LoadAsync()
     {
+
+
         if (IsBusy)
             return;
 
@@ -66,7 +77,7 @@ public class TablesViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            StatusMessage = ex.Message;
+            StatusMessage = Encoding.UTF8.GetString(Encoding.Default.GetBytes(ex.Message));
         }
         finally
         {
@@ -89,5 +100,65 @@ public class TablesViewModel : BaseViewModel
     {
         await _authService.LogoutAsync();
         await Shell.Current.GoToAsync("//login");
+    }
+
+    private async Task DropShiftAsync()
+    {
+        if (IsBusy)
+            return;
+
+        IsBusy = true;
+        StatusMessage = string.Empty;
+
+        try
+        {
+            await _apiService.DropShiftAsync();
+            IsOnShift = false;
+
+            StatusMessage = "Shift dropped successfully.";
+            await LoadAsync();
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = ex.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private async Task TakeShiftAsync()
+    {
+        if (IsBusy)
+            return;
+
+        IsBusy = true;
+        StatusMessage = string.Empty;
+
+        try
+        {
+            await _apiService.TakeShiftAsync();
+            IsOnShift = true;
+
+            StatusMessage = "Shift taken successfully.";
+            await LoadAsync();
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = ex.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private bool _isOnShift = false;
+
+    public bool IsOnShift
+    {
+        get => _isOnShift;
+        set => SetProperty(ref _isOnShift, value);
     }
 }

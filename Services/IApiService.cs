@@ -13,5 +13,7 @@ public interface IApiService
     Task AddOrderItemAsync(int orderId, AddOrderItemRequest request);
     Task SimulateReadyAsync(int orderId);
     Task<PaymentResponse> PayOrderAsync(int orderId, PayOrderRequest request);
+    Task DropShiftAsync(); 
+    Task TakeShiftAsync();
     void SetToken(string? token);
 }

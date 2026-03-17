@@ -22,6 +22,9 @@ public class ApiService : IApiService
         {
             BaseAddress = new Uri("http://10.0.2.2:8000/api/")
         };
+
+        _httpClient.DefaultRequestHeaders.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/json"));
     }
 
     public void SetToken(string? token)
@@ -34,6 +37,7 @@ public class ApiService : IApiService
     public async Task<LoginResponse> LoginAsync(LoginRequest request)
     {
         var response = await PostAsync("login", request, requiresSuccess: false);
+
         if (response.StatusCode == HttpStatusCode.Unauthorized)
             throw new Exception("Invalid email or password.");
 
@@ -72,13 +76,10 @@ public class ApiService : IApiService
     public async Task<Order> OpenOrderForTableAsync(int tableId)
     {
         var response = await PostAsync($"tables/{tableId}/orders", new { }, requiresSuccess: false);
+
         if (response.StatusCode == HttpStatusCode.BadRequest)
-        {
-            var raw = await response.Content.ReadAsStringAsync();
-            throw new Exception(string.IsNullOrWhiteSpace(raw)
-                ? "Cannot open order for this table. The table may already have an open order or no valid reservation exists."
-                : raw);
-        }
+            throw new Exception(await ExtractErrorMessageAsync(response,
+                "Cannot open order for this table. The table may already have an open order or no valid reservation exists."));
 
         await EnsureSuccessWithMessage(response, "Could not open order.");
         return await ReadAsync<Order>(response) ?? throw new Exception("Order response was empty.");
@@ -87,8 +88,9 @@ public class ApiService : IApiService
     public async Task AddOrderItemAsync(int orderId, AddOrderItemRequest request)
     {
         var response = await PostAsync($"orders/{orderId}/items", request, requiresSuccess: false);
+
         if (response.StatusCode == HttpStatusCode.BadRequest)
-            throw new Exception("The order cannot be modified anymore.");
+            throw new Exception(await ExtractErrorMessageAsync(response, "The order cannot be modified anymore."));
 
         await EnsureSuccessWithMessage(response, "Could not add item to order.");
     }
@@ -96,8 +98,9 @@ public class ApiService : IApiService
     public async Task SimulateReadyAsync(int orderId)
     {
         var response = await PostAsync($"orders/{orderId}/simulate-ready", new { }, requiresSuccess: false);
+
         if ((int)response.StatusCode == 422)
-            throw new Exception("No payable order found.");
+            throw new Exception(await ExtractErrorMessageAsync(response, "No payable order found."));
 
         await EnsureSuccessWithMessage(response, "Could not set order to ready-to-pay.");
     }
@@ -105,19 +108,46 @@ public class ApiService : IApiService
     public async Task<PaymentResponse> PayOrderAsync(int orderId, PayOrderRequest request)
     {
         var response = await PostAsync($"orders/{orderId}/pay", request, requiresSuccess: false);
+
         if (response.StatusCode == HttpStatusCode.BadRequest)
-            throw new Exception("Order status is not valid for payment.");
+            throw new Exception(await ExtractErrorMessageAsync(response, "Order status is not valid for payment."));
 
         await EnsureSuccessWithMessage(response, "Payment failed.");
         return await ReadAsync<PaymentResponse>(response) ?? new PaymentResponse();
     }
 
+    public async Task DropShiftAsync()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, "end-shift");
+        var response = await _httpClient.SendAsync(request);
+
+        Console.WriteLine($"END SHIFT STATUS: {(int)response.StatusCode} {response.StatusCode}");
+        Console.WriteLine($"END SHIFT BODY: {await response.Content.ReadAsStringAsync()}");
+
+        await EnsureSuccessWithMessage(response, "End shift failed.");
+    }
+
+    public async Task TakeShiftAsync()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, "take-shift");
+        var response = await _httpClient.SendAsync(request);
+
+        Console.WriteLine($"TAKE SHIFT STATUS: {(int)response.StatusCode} {response.StatusCode}");
+        Console.WriteLine($"TAKE SHIFT BODY: {await response.Content.ReadAsStringAsync()}");
+
+        await EnsureSuccessWithMessage(response, "Take shift failed.");
+    }
+
     private async Task<HttpResponseMessage> PostAsync<T>(string uri, T data, bool requiresSuccess = true)
     {
         var json = JsonSerializer.Serialize(data, _jsonOptions);
-        var response = await _httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json"));
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.PostAsync(uri, content);
+
         if (requiresSuccess)
             await EnsureSuccessWithMessage(response, $"Request to '{uri}' failed.");
+
         return response;
     }
 
@@ -132,7 +162,31 @@ public class ApiService : IApiService
         if (response.IsSuccessStatusCode)
             return;
 
+        var message = await ExtractErrorMessageAsync(response, fallbackMessage);
+        throw new Exception(message);
+    }
+
+    private static async Task<string> ExtractErrorMessageAsync(HttpResponseMessage response, string fallbackMessage)
+    {
         var raw = await response.Content.ReadAsStringAsync();
-        throw new Exception(string.IsNullOrWhiteSpace(raw) ? fallbackMessage : raw);
+
+        if (string.IsNullOrWhiteSpace(raw))
+            return fallbackMessage;
+
+        try
+        {
+            var apiError = JsonSerializer.Deserialize<ApiError>(raw, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            if (!string.IsNullOrWhiteSpace(apiError?.Message))
+                return apiError.Message;
+        }
+        catch
+        {
+        }
+
+        return raw;
     }
 }
