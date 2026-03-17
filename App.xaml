@@ -7,9 +7,16 @@
 
     <Application.Resources>
         <ResourceDictionary>
+
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
             <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
 
             <Style TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="TextColor" Value="{StaticResource White}" />
                 <Setter Property="CornerRadius" Value="12" />
                 <Setter Property="Padding" Value="14,10" />
             </Style>
