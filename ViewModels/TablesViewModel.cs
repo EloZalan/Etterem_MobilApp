@@ -100,6 +100,7 @@ public class TablesViewModel : BaseViewModel
     {
         await _authService.LogoutAsync();
         await Shell.Current.GoToAsync("//login");
+        IsOnShift = false;
     }
 
     private async Task DropShiftAsync()

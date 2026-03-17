@@ -140,7 +140,6 @@ public class ApiService : IApiService
 
     public async Task LogoutAsync()
     {
-        // Attempt to notify the server and revoke the token. Let server failures surface to the caller.
         var request = new HttpRequestMessage(HttpMethod.Post, "logout");
         var response = await _httpClient.SendAsync(request);
 
