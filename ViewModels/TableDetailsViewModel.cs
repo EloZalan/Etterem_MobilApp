@@ -116,8 +116,17 @@ public class TableDetailsViewModel : BaseViewModel
             _allMenuItems = await _apiService.GetMenuItemsAsync();
             SelectedCategory = Categories.FirstOrDefault();
 
-            StatusMessage = "The backend swagger does not provide an endpoint to fetch existing order details. This screen can open a new order and add items, but reloading an already existing order is not possible without a new GET endpoint.";
             RefreshComputedProperties();
+
+            if (AutoOpenOrder && SelectedTable is not null && CurrentOrder is null)
+            {
+                AutoOpenOrder = false;
+                await OpenOrderAsync();
+            }
+            else if (CurrentOrder is null)
+            {
+                StatusMessage = "Open an order for this table or continue adding items.";
+            }
         }
         catch (Exception ex)
         {
@@ -237,6 +246,13 @@ public class TableDetailsViewModel : BaseViewModel
         {
             StatusMessage = ex.Message;
         }
+    }
+
+    private bool _autoOpenOrder;
+    public bool AutoOpenOrder
+    {
+        get => _autoOpenOrder;
+        set => SetProperty(ref _autoOpenOrder, value);
     }
 
     private void RefreshComputedProperties()

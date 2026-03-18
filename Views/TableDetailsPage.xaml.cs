@@ -19,6 +19,11 @@ public partial class TableDetailsPage : ContentPage, IQueryAttributable
         {
             _viewModel.SelectedTable = table;
         }
+
+        if (query.TryGetValue("AutoOpenOrder", out var autoOpen) && autoOpen is bool shouldAutoOpen)
+        {
+            _viewModel.AutoOpenOrder = shouldAutoOpen;
+        }
     }
 
     protected override async void OnAppearing()

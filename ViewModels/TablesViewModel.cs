@@ -155,6 +155,52 @@ public class TablesViewModel : BaseViewModel
         }
     }
 
+    public async Task CreateWalkInReservationAndOpenOrderAsync(int guestCount)
+    {
+        if (IsBusy)
+            return;
+
+        if (!IsOnShift)
+        {
+            StatusMessage = "You must take shift before creating a walk-in reservation.";
+            return;
+        }
+
+        IsBusy = true;
+        StatusMessage = string.Empty;
+
+        try
+        {
+            var reservation = await _apiService.CreateWalkInReservationAsync(guestCount);
+
+            await LoadAsync();
+
+            var table = Tables.FirstOrDefault(t => t.Id == reservation.TableId)
+                        ?? new RestaurantTable
+                        {
+                            Id = reservation.TableId,
+                            Status = "reserved",
+                            Capacity = guestCount
+                        };
+
+            StatusMessage = $"Walk-in reservation created for {guestCount} guest(s) on table {reservation.TableId}.";
+
+            await Shell.Current.GoToAsync(nameof(TableDetailsPage), new Dictionary<string, object>
+            {
+                ["SelectedTable"] = table,
+                ["AutoOpenOrder"] = true
+            });
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = ex.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
     private bool _isOnShift = false;
 
     public bool IsOnShift

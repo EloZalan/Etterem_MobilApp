@@ -200,4 +200,19 @@ public class ApiService : IApiService
 
         return raw;
     }
+    public async Task<Reservation> CreateWalkInReservationAsync(int guestCount)
+    {
+        var response = await PostAsync("reservations/walk-in", new
+        {
+            guest_count = guestCount
+        }, requiresSuccess: false);
+
+        if ((int)response.StatusCode == 422)
+            throw new Exception(await ExtractErrorMessageAsync(response, "No free table is available right now."));
+
+        await EnsureSuccessWithMessage(response, "Could not create walk-in reservation.");
+
+        return await ReadAsync<Reservation>(response)
+               ?? throw new Exception("Walk-in reservation response was empty.");
+    }
 }

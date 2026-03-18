@@ -4,20 +4,39 @@
              x:Class="WaiterApp.Views.TablesPage"
              
              BackgroundColor="{x:StaticResource BackGroundGray}">
-    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="20">
+    <Grid RowDefinitions="Auto,Auto,*,*,Auto" Padding="20">
         <VerticalStackLayout Grid.Row="0" Spacing="4">
             <Label Text="Assigned Tables" FontSize="28" FontAttributes="Bold" TextColor="White"/>
             <Label Text="{Binding WaiterName, StringFormat='Logged in as: {0}'}" TextColor="White" />
         </VerticalStackLayout>
 
-        <HorizontalStackLayout Grid.Row="1" Spacing="12" Margin="0,16,0,16" HorizontalOptions="Fill">
+        <HorizontalStackLayout Grid.Row="1" Spacing="12" Margin="0,16,0,16" HorizontalOptions="Center">
             <Button Text="Take Shift" Command="{Binding TakeShiftCommand}" IsVisible="{Binding IsOnShift, Converter={StaticResource InverseBoolConverter}}" />
             <Button Text="Drop Shift" Command="{Binding DropShiftCommand}" IsVisible="{Binding IsOnShift}" />
-            <Button Text="Refresh" Command="{Binding LoadCommand}" HorizontalOptions="Fill" />
-            <Button Text="Logout" Command="{Binding LogoutCommand}" HorizontalOptions="Fill" />
+            <Button Text="Refresh" Command="{Binding LoadCommand}" HorizontalOptions="Center" />
+            <Button Text="Logout" Command="{Binding LogoutCommand}" HorizontalOptions="Center" />
+            <Button Text="FastReserv" Clicked="OnWalkInReservationClicked" HorizontalOptions="Center" />
         </HorizontalStackLayout>
 
-        <CollectionView Grid.Row="2" ItemsSource="{Binding Tables}" SelectionMode="None">
+        <CollectionView Grid.Row="2">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}">
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                            <Label Text="{Binding DisplayName}" FontAttributes="Bold" FontSize="20" />
+                            <Label Grid.Row="1" Text="{Binding Subtitle}" TextColor="Gray" />
+                            <Button Grid.Column="1" Grid.RowSpan="2"
+                        Text="Open"
+                        VerticalOptions="Center"
+                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenTableCommand}"
+                        CommandParameter="{Binding .}"/>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        
+        <CollectionView Grid.Row="3" ItemsSource="{Binding Tables}" SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}">
@@ -35,6 +54,6 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <Label Grid.Row="3" Text="{Binding StatusMessage}" TextColor="Gray" />
+        <Label Grid.Row="4" Text="{Binding StatusMessage}" TextColor="Gray" />
     </Grid>
 </ContentPage>
