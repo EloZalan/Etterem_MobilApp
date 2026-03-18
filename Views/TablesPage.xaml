@@ -5,42 +5,51 @@
              BackgroundColor="{x:StaticResource BackGroundGray}">
 
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="16">
-
-            <VerticalStackLayout Spacing="4">
-                <Label Text="Tables"
-                       FontSize="28"
-                       FontAttributes="Bold"
-                       TextColor="White" />
-                <Label Text="{Binding WaiterName, StringFormat='Logged in as: {0}'}"
-                       TextColor="White" />
-            </VerticalStackLayout>
-
-            <HorizontalStackLayout Spacing="12">
-                <Button Text="Take Shift"
-                        Command="{Binding TakeShiftCommand}"
-                        IsVisible="{Binding IsOnShift, Converter={StaticResource InverseBoolConverter}}" />
-                <Button Text="Drop Shift"
-                        Command="{Binding DropShiftCommand}"
-                        IsVisible="{Binding IsOnShift}" />
-                <Button Text="Refresh"
-                        Command="{Binding LoadCommand}" />
-                <Button Text="Logout"
-                        Command="{Binding LogoutCommand}" />
-                <Button Text="Reservation"
-                        Clicked="OnWalkInReservationClicked" />
-            </HorizontalStackLayout>
-
-            <Label Text="{Binding StatusMessage}"
-                   TextColor="White" />
-
-            <Label Text="Reserved / Occupied"
-                   FontSize="22"
-                   FontAttributes="Bold"
-                   TextColor="White" />
+        <VerticalStackLayout Padding="20" Spacing="10">
+            
+                <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}" Padding="15" >
+                    <VerticalStackLayout>
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Tables"
+                                   FontSize="28"
+                                   FontAttributes="Bold"
+                                   TextColor="White" 
+                                   />
+                            <Label Text="{Binding WaiterName, StringFormat='Logged in as: {0}'}"
+                                   TextColor="White" 
+                                   Padding="5,0,0,10"/>
+                        </VerticalStackLayout>
+                            
+                        
+                        <HorizontalStackLayout Spacing="12">
+                            <Button Text="Take Shift"
+                                    Command="{Binding TakeShiftCommand}"
+                                    IsVisible="{Binding IsOnShift, Converter={StaticResource InverseBoolConverter}}" />
+                            <Button Text="Drop Shift"
+                                    Command="{Binding DropShiftCommand}"
+                                    IsVisible="{Binding IsOnShift}" />
+                            <Button Text="R"
+                                    Command="{Binding LoadCommand}" />
+                            <Button Text="Logout"
+                                    Command="{Binding LogoutCommand}" />
+                            <Button Text="Reservation"
+                                    Clicked="OnWalkInReservationClicked" />
+                        </HorizontalStackLayout>
+                        
+                        <Label Text="{Binding StatusMessage}"
+                               TextColor="White" />
+                        
+                        <Label Text="Reserved / Occupied"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               TextColor="White" 
+                               IsVisible="{Binding IsOnShift}"/>
+                    </VerticalStackLayout>
+                </Frame>    
 
             <CollectionView ItemsSource="{Binding BusyTables}"
-                            SelectionMode="None">
+                            SelectionMode="None"
+                            IsVisible="{Binding IsOnShift}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}"
@@ -74,10 +83,12 @@
             <Label Text="Available"
                    FontSize="22"
                    FontAttributes="Bold"
-                   TextColor="White" />
+                   TextColor="White" 
+                   IsVisible="{Binding IsOnShift}"/>
 
             <CollectionView ItemsSource="{Binding AvailableTables}"
-                            SelectionMode="None">
+                            SelectionMode="None"
+                            IsVisible="{Binding IsOnShift}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}"
@@ -94,11 +105,11 @@
                                            TextColor="Gray" />
                                 </VerticalStackLayout>
 
-                                <Button Grid.Column="1"
+                                <!--<Button Grid.Column="1"
                                         Text="Open"
                                         VerticalOptions="Center"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenTableCommand}"
-                                        CommandParameter="{Binding .}" />
+                                        CommandParameter="{Binding .}" />-->
                             </Grid>
                         </Frame>
                     </DataTemplate>

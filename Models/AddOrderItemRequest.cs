@@ -7,5 +7,6 @@ public class AddOrderItemRequest
     [JsonPropertyName("menu_item_id")]
     public int MenuItemId { get; set; }
 
+    [JsonPropertyName("quantity")]
     public int Quantity { get; set; }
 }

@@ -226,7 +226,7 @@ public class TableDetailsViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            StatusMessage = ex.Message;
+            await Shell.Current.DisplayAlert("Error", ex.ToString(), "OK");
         }
     }
 

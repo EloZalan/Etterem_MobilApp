@@ -150,6 +150,7 @@ public class TablesViewModel : BaseViewModel
         {
             IsBusy = false;
         }
+        await LoadAsync();
     }
 
     public async Task LoadTablesOnlyAsync()
@@ -207,6 +208,8 @@ public class TablesViewModel : BaseViewModel
         {
             IsBusy = false;
         }
+        await LoadAsync();
+
     }
 
     private void SplitTables(IEnumerable<RestaurantTable> tables)
@@ -236,4 +239,6 @@ public class TablesViewModel : BaseViewModel
         get => _isOnShift;
         set => SetProperty(ref _isOnShift, value);
     }
+
+    
 }

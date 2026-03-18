@@ -7,41 +7,45 @@
         <VerticalStackLayout Padding="20" Spacing="16">
             <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}">
                 <VerticalStackLayout Spacing="8">
-                    <Label Text="Current Order" FontAttributes="Bold" FontSize="22" />
-                    <Label Text="{Binding CurrentOrderLabel}" />
-                    <Button Text="Open Order" Command="{Binding OpenOrderCommand}" />
+                    <Label Text="Current Order" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center"/>
+                    <Label Text="{Binding CurrentOrderLabel}" HorizontalOptions="Center" Padding="0,0,0,10"/>
+                    <Button Text="Open Order" Command="{Binding OpenOrderCommand}" WidthRequest="300"/>
                 </VerticalStackLayout>
             </Frame>
 
             <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}">
                 <VerticalStackLayout Spacing="12">
-                    <Label Text="Add Items" FontAttributes="Bold" FontSize="22" />
+                    <Label Text="Add Items" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" Padding="0,0,0,10"/>
 
                     <Picker Title="Category"
                             ItemsSource="{Binding Categories}"
                             ItemDisplayBinding="{Binding Name}"
-                            SelectedItem="{Binding SelectedCategory}" />
+                            SelectedItem="{Binding SelectedCategory}" 
+                            HorizontalTextAlignment="Center"
+                            WidthRequest="250"/>
 
                     <Picker Title="Menu Item"
                             ItemsSource="{Binding MenuItems}"
                             ItemDisplayBinding="{Binding Name}"
-                            SelectedItem="{Binding SelectedMenuItem}" />
+                            SelectedItem="{Binding SelectedMenuItem}" 
+                            HorizontalTextAlignment="Center"
+                            WidthRequest="250"/>
 
-                    <HorizontalStackLayout Spacing="12" VerticalOptions="Center">
-                        <Button Text="-" WidthRequest="50" Command="{Binding DecreaseQuantityCommand}" />
+                    <HorizontalStackLayout Spacing="12" VerticalOptions="Center" HorizontalOptions="Center" Padding="0,0,0,10">
+                        <Button Text="-" WidthRequest="40" Command="{Binding DecreaseQuantityCommand}" />
                         <Label Text="{Binding Quantity}" VerticalTextAlignment="Center" FontSize="18" />
-                        <Button Text="+" WidthRequest="50" Command="{Binding IncreaseQuantityCommand}" />
+                        <Button Text="+" WidthRequest="40" Command="{Binding IncreaseQuantityCommand}" />
                     </HorizontalStackLayout>
 
-                    <Button Text="Add To Order" Command="{Binding AddItemCommand}" />
+                    <Button Text="Add To Order" Command="{Binding AddItemCommand}" WidthRequest="300"/>
                 </VerticalStackLayout>
             </Frame>
 
             <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}">
                 <VerticalStackLayout Spacing="12">
-                    <Label Text="Checkout" FontAttributes="Bold" FontSize="22" />
-                    <Button Text="Mark Ready To Pay" Command="{Binding MarkReadyCommand}" />
-                    <HorizontalStackLayout Spacing="12">
+                    <Label Text="Checkout" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" Padding="0,0,0,10"/>
+                    <Button Text="Mark Ready To Pay" Command="{Binding MarkReadyCommand}" WidthRequest="300"/>
+                    <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
                         <Button Text="Pay Cash" Command="{Binding PayCashCommand}" HorizontalOptions="FillAndExpand" />
                         <Button Text="Pay Card" Command="{Binding PayCardCommand}" HorizontalOptions="FillAndExpand" />
                     </HorizontalStackLayout>
