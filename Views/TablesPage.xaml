@@ -21,31 +21,32 @@
                         </VerticalStackLayout>
                             
                         
-                        <HorizontalStackLayout Spacing="12">
+                        <HorizontalStackLayout Spacing="12" Padding="0,0,0,10">
                             <Button Text="Take Shift"
                                     Command="{Binding TakeShiftCommand}"
                                     IsVisible="{Binding IsOnShift, Converter={StaticResource InverseBoolConverter}}" />
                             <Button Text="Drop Shift"
                                     Command="{Binding DropShiftCommand}"
                                     IsVisible="{Binding IsOnShift}" />
-                            <Button Text="R"
-                                    Command="{Binding LoadCommand}" />
                             <Button Text="Logout"
                                     Command="{Binding LogoutCommand}" />
                             <Button Text="Reservation"
                                     Clicked="OnWalkInReservationClicked" />
+                            <Button Text="R"
+                                    Command="{Binding LoadCommand}" />
                         </HorizontalStackLayout>
                         
                         <Label Text="{Binding StatusMessage}"
                                TextColor="White" />
                         
+                    </VerticalStackLayout>
+                </Frame>    
                         <Label Text="Reserved / Occupied"
                                FontSize="22"
                                FontAttributes="Bold"
                                TextColor="White" 
-                               IsVisible="{Binding IsOnShift}"/>
-                    </VerticalStackLayout>
-                </Frame>    
+                               IsVisible="{Binding IsOnShift}"
+                               Padding="10,0,0,0"/>
 
             <CollectionView ItemsSource="{Binding BusyTables}"
                             SelectionMode="None"
@@ -60,10 +61,11 @@
                                 <VerticalStackLayout Spacing="4">
                                     <Label Text="{Binding DisplayName}"
                                            FontAttributes="Bold"
-                                           FontSize="20" />
+                                           FontSize="20" 
+                                           TextColor="White"/>
 
                                     <Label Text="{Binding Subtitle}"
-                                           TextColor="Gray" />
+                                           TextColor="LightGray" />
 
                                     <Label Text="{Binding ReservationText}"
                                            TextColor="Orange" />
@@ -84,7 +86,8 @@
                    FontSize="22"
                    FontAttributes="Bold"
                    TextColor="White" 
-                   IsVisible="{Binding IsOnShift}"/>
+                   IsVisible="{Binding IsOnShift}"
+                   Padding="10,0,0,0"/>
 
             <CollectionView ItemsSource="{Binding AvailableTables}"
                             SelectionMode="None"
@@ -99,10 +102,11 @@
                                 <VerticalStackLayout Spacing="4">
                                     <Label Text="{Binding DisplayName}"
                                            FontAttributes="Bold"
-                                           FontSize="20" />
+                                           FontSize="20" 
+                                           TextColor="White"/>
 
                                     <Label Text="{Binding Subtitle}"
-                                           TextColor="Gray" />
+                                           TextColor="LightGray" />
                                 </VerticalStackLayout>
 
                                 <!--<Button Grid.Column="1"
