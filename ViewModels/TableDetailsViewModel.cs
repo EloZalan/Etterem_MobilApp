@@ -15,6 +15,7 @@ public class TableDetailsViewModel : BaseViewModel
     private MenuCategory? _selectedCategory;
     private WaiterMenuItems? _selectedMenuItem;
     private int _quantity = 1;
+    
     private string _statusMessage = "Open an order for this table or continue adding items.";
 
     public TableDetailsViewModel(IApiService apiService)
@@ -73,7 +74,13 @@ public class TableDetailsViewModel : BaseViewModel
     public int Quantity
     {
         get => _quantity;
-        set => SetProperty(ref _quantity, value);
+        set
+        {
+            if (value < 1)
+                return;
+
+            SetProperty(ref _quantity, value);
+        }
     }
 
     public string StatusMessage
@@ -116,6 +123,27 @@ public class TableDetailsViewModel : BaseViewModel
             _allMenuItems = await _apiService.GetMenuItemsAsync();
             SelectedCategory = Categories.FirstOrDefault();
 
+            if (SelectedTable is not null)
+            {
+                var existingOrder = await _apiService.GetCurrentOrderForTableAsync(SelectedTable.Id);
+
+                if (existingOrder?.HasOpenOrder == true)
+                {
+                    CurrentOrder = new Order
+                    {
+                        Id = existingOrder.OrderId!.Value,
+                        TableId = existingOrder.TableId ?? SelectedTable.Id,
+                        ReservationId = existingOrder.ReservationId ?? 0,
+                        TotalPrice = existingOrder.TotalPrice,
+                        Status = existingOrder.Status ?? "in_progress"
+                    };
+
+                    RefreshComputedProperties();
+                    StatusMessage = $"Existing order loaded for table {SelectedTable.Id}.";
+                    return;
+                }
+            }
+
             RefreshComputedProperties();
 
             if (AutoOpenOrder && SelectedTable is not null && CurrentOrder is null)
@@ -153,7 +181,7 @@ public class TableDetailsViewModel : BaseViewModel
         SelectedMenuItem = MenuItems.FirstOrDefault();
     }
 
-    private async Task OpenOrderAsync()
+    public async Task OpenOrderAsync()
     {
         if (SelectedTable is null)
             return;
@@ -161,7 +189,7 @@ public class TableDetailsViewModel : BaseViewModel
         try
         {
             CurrentOrder = await _apiService.OpenOrderForTableAsync(SelectedTable.Id);
-            StatusMessage = "Order opened successfully.";
+            StatusMessage = $"Order opened for table {SelectedTable.Id}.";
             RefreshComputedProperties();
         }
         catch (Exception ex)
@@ -253,6 +281,13 @@ public class TableDetailsViewModel : BaseViewModel
     {
         get => _autoOpenOrder;
         set => SetProperty(ref _autoOpenOrder, value);
+    }
+
+    private TableOrderDetails? _tableOrderDetails;
+    public TableOrderDetails? TableOrderDetails
+    {
+        get => _tableOrderDetails;
+        set => SetProperty(ref _tableOrderDetails, value);
     }
 
     private void RefreshComputedProperties()

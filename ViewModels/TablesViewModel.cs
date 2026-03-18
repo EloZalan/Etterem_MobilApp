@@ -27,6 +27,8 @@ public class TablesViewModel : BaseViewModel
     }
 
     public ObservableCollection<RestaurantTable> Tables { get; }
+    public ObservableCollection<RestaurantTable> BusyTables { get; } = new();
+    public ObservableCollection<RestaurantTable> AvailableTables { get; } = new();
 
     public string StatusMessage
     {
@@ -58,19 +60,14 @@ public class TablesViewModel : BaseViewModel
 
         try
         {
-            Tables.Clear();
             var allTables = await _apiService.GetTablesAsync();
 
-            // Swagger does not define a waiter-table ownership field or endpoint.
-            // If backend later returns waiterId, this filter will start working automatically.
             var currentWaiterId = _authService.CurrentUser?.Id;
             var visibleTables = allTables
                 .Where(t => t.WaiterId is null || t.WaiterId == currentWaiterId)
-                .OrderBy(t => t.Id)
                 .ToList();
 
-            foreach (var table in visibleTables)
-                Tables.Add(table);
+            SplitTables(visibleTables);
 
             if (Tables.Count == 0)
                 StatusMessage = "No tables assigned to this waiter.";
@@ -155,6 +152,21 @@ public class TablesViewModel : BaseViewModel
         }
     }
 
+    public async Task LoadTablesOnlyAsync()
+    {
+        Tables.Clear();
+        var allTables = await _apiService.GetTablesAsync();
+
+        var currentWaiterId = _authService.CurrentUser?.Id;
+        var visibleTables = allTables
+            .Where(t => t.WaiterId is null || t.WaiterId == currentWaiterId)
+            .OrderBy(t => t.Id)
+            .ToList();
+
+        foreach (var table in visibleTables)
+            Tables.Add(table);
+    }
+
     public async Task CreateWalkInReservationAndOpenOrderAsync(int guestCount)
     {
         if (IsBusy)
@@ -173,23 +185,19 @@ public class TablesViewModel : BaseViewModel
         {
             var reservation = await _apiService.CreateWalkInReservationAsync(guestCount);
 
-            await LoadAsync();
+            await LoadTablesOnlyAsync();
 
-            var table = Tables.FirstOrDefault(t => t.Id == reservation.TableId)
-                        ?? new RestaurantTable
-                        {
-                            Id = reservation.TableId,
-                            Status = "reserved",
-                            Capacity = guestCount
-                        };
+            StatusMessage = $"Reservation created successfully. Table {reservation.TableId} is reserved for {guestCount} guest(s).";
 
-            StatusMessage = $"Walk-in reservation created for {guestCount} guest(s) on table {reservation.TableId}.";
-
-            await Shell.Current.GoToAsync(nameof(TableDetailsPage), new Dictionary<string, object>
+            var table = Tables.FirstOrDefault(t => t.Id == reservation.TableId);
+            if (table is not null)
             {
-                ["SelectedTable"] = table,
-                ["AutoOpenOrder"] = true
-            });
+                await Shell.Current.GoToAsync(nameof(TableDetailsPage), new Dictionary<string, object>
+                {
+                    ["SelectedTable"] = table,
+                    ["AutoOpenOrder"] = true
+                });
+            }
         }
         catch (Exception ex)
         {
@@ -198,6 +206,26 @@ public class TablesViewModel : BaseViewModel
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    private void SplitTables(IEnumerable<RestaurantTable> tables)
+    {
+        BusyTables.Clear();
+        AvailableTables.Clear();
+
+        foreach (var table in tables.OrderBy(t => t.Id))
+        {
+            var status = table.Status?.Trim().ToLowerInvariant();
+
+            if (status == "reserved" || status == "occupied")
+            {
+                BusyTables.Add(table);
+            }
+            else
+            {
+                AvailableTables.Add(table);
+            }
         }
     }
 

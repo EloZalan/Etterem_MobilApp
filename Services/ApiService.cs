@@ -95,6 +95,18 @@ public class ApiService : IApiService
         await EnsureSuccessWithMessage(response, "Could not add item to order.");
     }
 
+    public async Task<TableOrderDetails?> GetCurrentOrderForTableAsync(int tableId)
+    {
+        var response = await _httpClient.GetAsync($"tables/{tableId}/orders");
+
+        if (response.StatusCode == HttpStatusCode.BadRequest)
+            return null;
+
+        await EnsureSuccessWithMessage(response, "Could not load the current order for this table.");
+
+        return await ReadAsync<TableOrderDetails>(response);
+    }
+
     public async Task SimulateReadyAsync(int orderId)
     {
         var response = await PostAsync($"orders/{orderId}/simulate-ready", new { }, requiresSuccess: false);
@@ -208,7 +220,7 @@ public class ApiService : IApiService
         }, requiresSuccess: false);
 
         if ((int)response.StatusCode == 422)
-            throw new Exception(await ExtractErrorMessageAsync(response, "No free table is available right now."));
+            throw new Exception("No free table is available right now.");
 
         await EnsureSuccessWithMessage(response, "Could not create walk-in reservation.");
 

@@ -10,6 +10,7 @@ public interface IApiService
     Task<List<MenuCategory>> GetMenuCategoriesAsync();
     Task<List<WaiterMenuItems>> GetMenuItemsAsync();
     Task<Order> OpenOrderForTableAsync(int tableId);
+    Task<TableOrderDetails?> GetCurrentOrderForTableAsync(int tableId);
     Task AddOrderItemAsync(int orderId, AddOrderItemRequest request);
     Task SimulateReadyAsync(int orderId);
     Task<PaymentResponse> PayOrderAsync(int orderId, PayOrderRequest request);
