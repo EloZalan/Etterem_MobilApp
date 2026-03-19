@@ -94,6 +94,7 @@ public class TableDetailsViewModel : BaseViewModel
     }
 
     public bool HasOrder => CurrentOrder is not null;
+    public bool ShowOpenOrderButton => CurrentOrder is null;
     public bool HasOrderItems => OrderItems.Count > 0;
     public string CurrentOrderLabel => CurrentOrder is null
         ? "No open order"
@@ -350,6 +351,7 @@ public class TableDetailsViewModel : BaseViewModel
     private void RefreshComputedProperties()
     {
         OnPropertyChanged(nameof(HasOrder));
+        OnPropertyChanged(nameof(ShowOpenOrderButton));
         OnPropertyChanged(nameof(CurrentOrderLabel));
         OnPropertyChanged(nameof(HasOrderItems));
     }

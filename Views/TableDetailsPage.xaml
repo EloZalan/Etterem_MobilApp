@@ -9,11 +9,11 @@
                 <VerticalStackLayout Spacing="8">
                     <Label Text="Current Order" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" TextColor="White"/>
                     <Label Text="{Binding CurrentOrderLabel}" HorizontalOptions="Center" Padding="0,0,0,10"/>
-                    <Button Text="Open Order" Command="{Binding OpenOrderCommand}" WidthRequest="300"/>
+                    <Button Text="Open Order" Command="{Binding OpenOrderCommand}" WidthRequest="300" IsVisible="{Binding ShowOpenOrderButton}"/>
                 </VerticalStackLayout>
             </Frame>
 
-            <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}" ><!--IsVisible="{Binding HasOrder}"-->
+            <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}" IsVisible="{Binding HasOrder}">
                 <VerticalStackLayout Spacing="12">
                     <Label Text="Ordered Items" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" TextColor="White"/>
 
