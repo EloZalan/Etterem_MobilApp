@@ -13,6 +13,27 @@
                 </VerticalStackLayout>
             </Frame>
 
+            <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}" IsVisible="{Binding HasOrder}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Ordered Items" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" TextColor="White"/>
+
+                    <CollectionView ItemsSource="{Binding OrderItems}" SelectionMode="None" HeightRequest="220" EmptyView="No items in this order yet.">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame Margin="0,4" Padding="12,10" CornerRadius="12" BackgroundColor="#3A3A3A" BorderColor="#555555">
+                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                        <Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}" FontAttributes="Bold" TextColor="White"/>
+                                        <Label Grid.Row="0" Grid.Column="1" Text="{Binding LineTotalLabel}" TextColor="White" HorizontalTextAlignment="End"/>
+                                        <Label Grid.Row="1" Grid.Column="0" Text="{Binding Quantity, StringFormat='Qty: {0}'}" TextColor="#D0D0D0"/>
+                                        <Label Grid.Row="1" Grid.Column="1" Text="{Binding PriceLabel}" TextColor="#D0D0D0" HorizontalTextAlignment="End"/>
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Frame>
+
             <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}">
                 <VerticalStackLayout Spacing="12">
                     <Label Text="Add Items" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" Padding="0,0,0,10" TextColor="White"/>
@@ -46,8 +67,8 @@
                     <Label Text="Checkout" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" Padding="0,0,0,10" TextColor="White"/>
                     <Button Text="Mark Ready To Pay" Command="{Binding MarkReadyCommand}" WidthRequest="300" BackgroundColor="#FFBF00" TextColor="Black"/>
                     <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
-                        <Button Text="Pay Cash" Clicked="PayByCash_Clicked" HorizontalOptions="Fill" WidthRequest="145" BackgroundColor="#009E60"/>
-                        <Button Text="Pay Card" Clicked="PayByCard_Clicked" HorizontalOptions="Fill" WidthRequest="145" BackgroundColor="#1F51FF"/>
+                        <Button Text="Pay Cash" Command="{Binding GoToPayCommand}" HorizontalOptions="Fill" WidthRequest="145" BackgroundColor="#009E60"/>
+                        <Button Text="Pay Card" Command="{Binding GoToPayCommand}" HorizontalOptions="Fill" WidthRequest="145" BackgroundColor="#1F51FF"/>
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
             </Frame>

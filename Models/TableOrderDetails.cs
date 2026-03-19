@@ -44,4 +44,7 @@ public class TableOrderItem
 
     [JsonPropertyName("line_total")]
     public int? LineTotal { get; set; }
+
+    public string PriceLabel => $"{(Price ?? 0):N0} Ft";
+    public string LineTotalLabel => $"{(LineTotal ?? ((Price ?? 0) * Quantity)):N0} Ft";
 }

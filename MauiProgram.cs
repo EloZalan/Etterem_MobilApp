@@ -28,10 +28,12 @@ public static class MauiProgram
         builder.Services.AddSingleton<LoginPage>();
         builder.Services.AddSingleton<TablesPage>();
         builder.Services.AddTransient<TableDetailsPage>();
+        builder.Services.AddTransient<PayPage>();
 
         builder.Services.AddSingleton<LoginViewModel>();
         builder.Services.AddSingleton<TablesViewModel>();
         builder.Services.AddTransient<TableDetailsViewModel>();
+        builder.Services.AddTransient<PayPageViewModel>();
 
 #if DEBUG
         builder.Logging.AddDebug();

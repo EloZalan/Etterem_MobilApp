@@ -1,3 +1,5 @@
+using WaiterApp.Views;
+using System.Windows.Input;
 using WaiterApp.Models;
 using WaiterApp.ViewModels;
 
@@ -30,15 +32,5 @@ public partial class TableDetailsPage : ContentPage, IQueryAttributable
     {
         base.OnAppearing();
         await _viewModel.LoadAsync();
-    }
-
-    private async void PayByCash_Clicked(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync(nameof(PayPage));
-    }
-
-    private void PayByCard_Clicked(object sender, EventArgs e)
-    {
-
     }
 }

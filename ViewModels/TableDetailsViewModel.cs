@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using WaiterApp.Models;
 using WaiterApp.Services;
+using WaiterApp.Views;
 
 namespace WaiterApp.ViewModels;
 
@@ -23,6 +24,7 @@ public class TableDetailsViewModel : BaseViewModel
         _apiService = apiService;
         Categories = new ObservableCollection<MenuCategory>();
         MenuItems = new ObservableCollection<WaiterMenuItems>();
+        OrderItems = new ObservableCollection<TableOrderItem>();
 
         LoadCommand = new Command(async () => await LoadAsync());
         OpenOrderCommand = new Command(async () => await OpenOrderAsync());
@@ -30,6 +32,7 @@ public class TableDetailsViewModel : BaseViewModel
         MarkReadyCommand = new Command(async () => await MarkReadyAsync());
         PayCashCommand = new Command(async () => await PayAsync("cash"));
         PayCardCommand = new Command(async () => await PayAsync("card"));
+        GoToPayCommand = new Command(async () => await GoToPay());
         IncreaseQuantityCommand = new Command(() => Quantity++);
         DecreaseQuantityCommand = new Command(() => { if (Quantity > 1) Quantity--; });
     }
@@ -54,6 +57,7 @@ public class TableDetailsViewModel : BaseViewModel
 
     public ObservableCollection<MenuCategory> Categories { get; }
     public ObservableCollection<WaiterMenuItems> MenuItems { get; }
+    public ObservableCollection<TableOrderItem> OrderItems { get; }
 
     public MenuCategory? SelectedCategory
     {
@@ -90,6 +94,7 @@ public class TableDetailsViewModel : BaseViewModel
     }
 
     public bool HasOrder => CurrentOrder is not null;
+    public bool HasOrderItems => OrderItems.Count > 0;
     public string CurrentOrderLabel => CurrentOrder is null
         ? "No open order"
         : $"Order #{CurrentOrder.Id} • {CurrentOrder.Status} • {CurrentOrder.TotalPriceLabel}";
@@ -102,6 +107,7 @@ public class TableDetailsViewModel : BaseViewModel
     public ICommand PayCardCommand { get; }
     public ICommand IncreaseQuantityCommand { get; }
     public ICommand DecreaseQuantityCommand { get; }
+    public ICommand GoToPayCommand { get; }
 
     public async Task LoadAsync()
     {
@@ -138,12 +144,14 @@ public class TableDetailsViewModel : BaseViewModel
                         Status = existingOrder.Status ?? "in_progress"
                     };
 
+                    await RefreshOrderDetailsAsync();
                     RefreshComputedProperties();
                     StatusMessage = $"Existing order loaded for table {SelectedTable.Id}.";
                     return;
                 }
             }
 
+            ClearOrderItems();
             RefreshComputedProperties();
 
             if (AutoOpenOrder && SelectedTable is not null && CurrentOrder is null)
@@ -189,6 +197,7 @@ public class TableDetailsViewModel : BaseViewModel
         try
         {
             CurrentOrder = await _apiService.OpenOrderForTableAsync(SelectedTable.Id);
+            await RefreshOrderDetailsAsync();
             StatusMessage = $"Order opened for table {SelectedTable.Id}.";
             RefreshComputedProperties();
         }
@@ -220,7 +229,7 @@ public class TableDetailsViewModel : BaseViewModel
                 Quantity = Quantity
             });
 
-            CurrentOrder.TotalPrice += SelectedMenuItem.Price * Quantity;
+            await RefreshOrderDetailsAsync();
             StatusMessage = $"Added {Quantity} x {SelectedMenuItem.Name}.";
             RefreshComputedProperties();
         }
@@ -242,6 +251,7 @@ public class TableDetailsViewModel : BaseViewModel
         {
             await _apiService.SimulateReadyAsync(CurrentOrder.Id);
             CurrentOrder.Status = "ready_to_pay";
+            await RefreshOrderDetailsAsync();
             StatusMessage = "Order marked as ready to pay.";
             RefreshComputedProperties();
         }
@@ -275,6 +285,52 @@ public class TableDetailsViewModel : BaseViewModel
             StatusMessage = ex.Message;
         }
     }
+    private async Task GoToPay()
+    {
+        if (CurrentOrder is null)
+        {
+            StatusMessage = "Open an order first.";
+            return;
+        }
+
+        await Shell.Current.GoToAsync(nameof(PayPage), new Dictionary<string, object>
+        {
+            ["CurrentOrder"] = CurrentOrder
+        });
+    }
+   
+
+
+    private async Task RefreshOrderDetailsAsync()
+    {
+        if (SelectedTable is null)
+        {
+            ClearOrderItems();
+            return;
+        }
+
+        var details = await _apiService.GetCurrentOrderForTableAsync(SelectedTable.Id);
+        TableOrderDetails = details;
+
+        OrderItems.Clear();
+        foreach (var item in details?.Items ?? Enumerable.Empty<TableOrderItem>())
+            OrderItems.Add(item);
+
+        if (details?.OrderId is not null && CurrentOrder is not null)
+        {
+            CurrentOrder.TotalPrice = details.TotalPrice;
+            CurrentOrder.Status = details.Status ?? CurrentOrder.Status;
+        }
+
+        OnPropertyChanged(nameof(HasOrderItems));
+    }
+
+    private void ClearOrderItems()
+    {
+        TableOrderDetails = null;
+        OrderItems.Clear();
+        OnPropertyChanged(nameof(HasOrderItems));
+    }
 
     private bool _autoOpenOrder;
     public bool AutoOpenOrder
@@ -294,5 +350,6 @@ public class TableDetailsViewModel : BaseViewModel
     {
         OnPropertyChanged(nameof(HasOrder));
         OnPropertyChanged(nameof(CurrentOrderLabel));
+        OnPropertyChanged(nameof(HasOrderItems));
     }
 }

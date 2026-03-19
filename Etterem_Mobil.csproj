@@ -64,11 +64,4 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
 		<PackageReference Include="PusherClient" Version="2.2.1" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiXaml Update="Views\PayPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	</ItemGroup>
-
 </Project>

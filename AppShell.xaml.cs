@@ -1,5 +1,4 @@
-﻿using MauiApp1.Views;
-using WaiterApp.Views;
+﻿using WaiterApp.Views;
 
 namespace WaiterApp;
 

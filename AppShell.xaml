@@ -8,4 +8,6 @@
 
     <ShellContent Route="login" ContentTemplate="{DataTemplate views:LoginPage}" />
     <ShellContent Route="tables" ContentTemplate="{DataTemplate views:TablesPage}" />
+    <ShellContent Route="tableDetails" ContentTemplate="{DataTemplate views:TableDetailsPage}" />
+    <ShellContent Route="pay" ContentTemplate="{DataTemplate views:PayPage}"/>
 </Shell>
