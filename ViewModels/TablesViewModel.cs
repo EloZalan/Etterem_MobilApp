@@ -87,6 +87,16 @@ public class TablesViewModel : BaseViewModel
         if (table is null)
             return;
 
+        if (table.Reservation?.StartTime is DateTime reservationStart && reservationStart > DateTime.Now)
+        {
+            var reservationTimeText = reservationStart.ToString("HH:mm");
+            await Shell.Current.DisplayAlert(
+                "Reservation not active yet",
+                $"This reservation is for {reservationTimeText}. You cannot open this table yet.",
+                "OK");
+            return;
+        }
+
         await Shell.Current.GoToAsync(nameof(TableDetailsPage), new Dictionary<string, object>
         {
             ["SelectedTable"] = table
