@@ -19,5 +19,10 @@ public partial class PayPage : ContentPage, IQueryAttributable
         {
             _viewModel.CurrentOrder = order;
         }
+
+        if (query.TryGetValue("PaymentMethod", out var paymentMethod) && paymentMethod is string method)
+        {
+            _viewModel.SelectedPaymentMethod = method;
+        }
     }
 }

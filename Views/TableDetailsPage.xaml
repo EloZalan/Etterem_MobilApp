@@ -67,8 +67,8 @@
                     <Label Text="Checkout" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" Padding="0,0,0,10" TextColor="White"/>
                     <Button Text="Mark Ready To Pay" Command="{Binding MarkReadyCommand}" WidthRequest="300" BackgroundColor="#FFBF00" TextColor="Black"/>
                     <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
-                        <Button Text="Pay Cash" Command="{Binding GoToPayCommand}" HorizontalOptions="Fill" WidthRequest="145" BackgroundColor="#009E60"/>
-                        <Button Text="Pay Card" Command="{Binding GoToPayCommand}" HorizontalOptions="Fill" WidthRequest="145" BackgroundColor="#1F51FF"/>
+                        <Button Text="Pay Cash" Command="{Binding GoToPayCommand}" CommandParameter="cash" HorizontalOptions="Fill" WidthRequest="145" BackgroundColor="#009E60"/>
+                        <Button Text="Pay Card" Command="{Binding GoToPayCommand}" CommandParameter="card" HorizontalOptions="Fill" WidthRequest="145" BackgroundColor="#1F51FF"/>
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
             </Frame>

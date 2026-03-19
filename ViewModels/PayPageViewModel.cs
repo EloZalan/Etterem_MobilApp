@@ -9,6 +9,7 @@ public class PayPageViewModel : BaseViewModel
     private readonly IApiService _apiService;
     private Order? _currentOrder;
     private string _statusMessage = "Choose a payment method.";
+    private string _selectedPaymentMethod = string.Empty;
 
     public PayPageViewModel(IApiService apiService)
     {
@@ -35,6 +36,30 @@ public class PayPageViewModel : BaseViewModel
     public string CurrentOrderLabel => CurrentOrder is null
         ? "No order selected"
         : $"Order #{CurrentOrder.Id} • {CurrentOrder.Status} • {CurrentOrder.TotalPriceLabel}";
+
+    public string SelectedPaymentMethod
+    {
+        get => _selectedPaymentMethod;
+        set
+        {
+            var normalized = value?.Trim().ToLowerInvariant() ?? string.Empty;
+            if (SetProperty(ref _selectedPaymentMethod, normalized))
+            {
+                OnPropertyChanged(nameof(IsCashPaymentVisible));
+                OnPropertyChanged(nameof(IsCardPaymentVisible));
+
+                StatusMessage = normalized switch
+                {
+                    "cash" => "Confirm cash payment.",
+                    "card" => "Confirm card payment.",
+                    _ => "Choose a payment method."
+                };
+            }
+        }
+    }
+
+    public bool IsCashPaymentVisible => SelectedPaymentMethod == "cash" || string.IsNullOrWhiteSpace(SelectedPaymentMethod);
+    public bool IsCardPaymentVisible => SelectedPaymentMethod == "card" || string.IsNullOrWhiteSpace(SelectedPaymentMethod);
 
     public string StatusMessage
     {

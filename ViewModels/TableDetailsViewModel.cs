@@ -32,7 +32,7 @@ public class TableDetailsViewModel : BaseViewModel
         MarkReadyCommand = new Command(async () => await MarkReadyAsync());
         PayCashCommand = new Command(async () => await PayAsync("cash"));
         PayCardCommand = new Command(async () => await PayAsync("card"));
-        GoToPayCommand = new Command(async () => await GoToPay());
+        GoToPayCommand = new Command<string>(async method => await GoToPay(method ?? string.Empty));
         IncreaseQuantityCommand = new Command(() => Quantity++);
         DecreaseQuantityCommand = new Command(() => { if (Quantity > 1) Quantity--; });
     }
@@ -285,7 +285,7 @@ public class TableDetailsViewModel : BaseViewModel
             StatusMessage = ex.Message;
         }
     }
-    private async Task GoToPay()
+    private async Task GoToPay(string method)
     {
         if (CurrentOrder is null)
         {
@@ -295,7 +295,8 @@ public class TableDetailsViewModel : BaseViewModel
 
         await Shell.Current.GoToAsync(nameof(PayPage), new Dictionary<string, object>
         {
-            ["CurrentOrder"] = CurrentOrder
+            ["CurrentOrder"] = CurrentOrder,
+            ["PaymentMethod"] = method
         });
     }
    
