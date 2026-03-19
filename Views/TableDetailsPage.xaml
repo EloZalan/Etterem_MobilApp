@@ -13,7 +13,7 @@
                 </VerticalStackLayout>
             </Frame>
 
-            <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}" IsVisible="{Binding HasOrder}">
+            <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}" ><!--IsVisible="{Binding HasOrder}"-->
                 <VerticalStackLayout Spacing="12">
                     <Label Text="Ordered Items" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" TextColor="White"/>
 
