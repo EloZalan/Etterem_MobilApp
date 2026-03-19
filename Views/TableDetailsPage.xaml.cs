@@ -31,4 +31,14 @@ public partial class TableDetailsPage : ContentPage, IQueryAttributable
         base.OnAppearing();
         await _viewModel.LoadAsync();
     }
+
+    private async void PayByCash_Clicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync(nameof(PayPage));
+    }
+
+    private void PayByCard_Clicked(object sender, EventArgs e)
+    {
+
+    }
 }

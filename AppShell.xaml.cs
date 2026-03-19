@@ -1,4 +1,5 @@
-﻿using WaiterApp.Views;
+﻿using MauiApp1.Views;
+using WaiterApp.Views;
 
 namespace WaiterApp;
 
@@ -8,5 +9,6 @@ public partial class AppShell : Shell
     {
         InitializeComponent();
         Routing.RegisterRoute(nameof(TableDetailsPage), typeof(TableDetailsPage));
+        Routing.RegisterRoute(nameof(PayPage), typeof(PayPage));
     }
 }

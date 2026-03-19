@@ -7,7 +7,7 @@
         <VerticalStackLayout Padding="20" Spacing="16">
             <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}">
                 <VerticalStackLayout Spacing="8">
-                    <Label Text="Current Order" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center"/>
+                    <Label Text="Current Order" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" TextColor="White"/>
                     <Label Text="{Binding CurrentOrderLabel}" HorizontalOptions="Center" Padding="0,0,0,10"/>
                     <Button Text="Open Order" Command="{Binding OpenOrderCommand}" WidthRequest="300"/>
                 </VerticalStackLayout>
@@ -15,7 +15,7 @@
 
             <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}">
                 <VerticalStackLayout Spacing="12">
-                    <Label Text="Add Items" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" Padding="0,0,0,10"/>
+                    <Label Text="Add Items" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" Padding="0,0,0,10" TextColor="White"/>
 
                     <Picker Title="Category"
                             ItemsSource="{Binding Categories}"
@@ -43,11 +43,11 @@
 
             <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}">
                 <VerticalStackLayout Spacing="12">
-                    <Label Text="Checkout" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" Padding="0,0,0,10"/>
-                    <Button Text="Mark Ready To Pay" Command="{Binding MarkReadyCommand}" WidthRequest="300"/>
+                    <Label Text="Checkout" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" Padding="0,0,0,10" TextColor="White"/>
+                    <Button Text="Mark Ready To Pay" Command="{Binding MarkReadyCommand}" WidthRequest="300" BackgroundColor="#FFBF00" TextColor="Black"/>
                     <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
-                        <Button Text="Pay Cash" Command="{Binding PayCashCommand}" HorizontalOptions="FillAndExpand" />
-                        <Button Text="Pay Card" Command="{Binding PayCardCommand}" HorizontalOptions="FillAndExpand" />
+                        <Button Text="Pay Cash" Clicked="PayByCash_Clicked" HorizontalOptions="Fill" WidthRequest="145" BackgroundColor="#009E60"/>
+                        <Button Text="Pay Card" Clicked="PayByCard_Clicked" HorizontalOptions="Fill" WidthRequest="145" BackgroundColor="#1F51FF"/>
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
             </Frame>

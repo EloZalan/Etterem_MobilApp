@@ -31,7 +31,8 @@
                             <Button Text="Logout"
                                     Command="{Binding LogoutCommand}" />
                             <Button Text="Reservation"
-                                    Clicked="OnWalkInReservationClicked" />
+                                    Clicked="OnWalkInReservationClicked" 
+                                    IsVisible="{Binding IsOnShift}"/>
                             <Button Text="R"
                                     Command="{Binding LoadCommand}" />
                         </HorizontalStackLayout>
