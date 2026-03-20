@@ -29,6 +29,7 @@ public class TableDetailsViewModel : BaseViewModel
         LoadCommand = new Command(async () => await LoadAsync());
         OpenOrderCommand = new Command(async () => await OpenOrderAsync());
         AddItemCommand = new Command(async () => await AddItemAsync());
+        DeleteOrderItemCommand = new Command<TableOrderItem>(async item => await DeleteOrderItemAsync(item));
         MarkReadyCommand = new Command(async () => await MarkReadyAsync());
         PayCashCommand = new Command(async () => await PayAsync("cash"));
         PayCardCommand = new Command(async () => await PayAsync("card"));
@@ -107,6 +108,7 @@ public class TableDetailsViewModel : BaseViewModel
     public ICommand LoadCommand { get; }
     public ICommand OpenOrderCommand { get; }
     public ICommand AddItemCommand { get; }
+    public ICommand DeleteOrderItemCommand { get; }
     public ICommand MarkReadyCommand { get; }
     public ICommand PayCashCommand { get; }
     public ICommand PayCardCommand { get; }
@@ -241,6 +243,39 @@ public class TableDetailsViewModel : BaseViewModel
         catch (Exception ex)
         {
             await Shell.Current.DisplayAlert("Error", ex.ToString(), "OK");
+        }
+    }
+
+    private async Task DeleteOrderItemAsync(TableOrderItem? item)
+    {
+        if (CurrentOrder is null)
+        {
+            StatusMessage = "No order is open.";
+            return;
+        }
+
+        if (item is null)
+            return;
+
+        var confirm = await Shell.Current.DisplayAlert(
+            "Delete item",
+            $"Delete {item.Name} from the order?",
+            "Yes",
+            "No");
+
+        if (!confirm)
+            return;
+
+        try
+        {
+            await _apiService.DeleteOrderItemAsync(CurrentOrder.Id, item.Id);
+            await RefreshOrderDetailsAsync();
+            StatusMessage = $"{item.Name} deleted from the order.";
+            RefreshComputedProperties();
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = ex.Message;
         }
     }
 

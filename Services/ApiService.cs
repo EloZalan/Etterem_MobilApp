@@ -95,6 +95,44 @@ public class ApiService : IApiService
         await EnsureSuccessWithMessage(response, "Could not add item to order.");
     }
 
+    public async Task DeleteOrderItemAsync(int orderId, int orderItemId)
+    {
+        var candidates = new HttpRequestMessage[]
+        {
+            new(HttpMethod.Delete, $"orders/{orderId}/items/{orderItemId}"),
+            new(HttpMethod.Delete, $"order-items/{orderItemId}"),
+            new(HttpMethod.Post, $"orders/{orderId}/items/{orderItemId}/delete")
+            {
+                Content = new StringContent("{}", Encoding.UTF8, "application/json")
+            },
+            new(HttpMethod.Post, $"order-items/{orderItemId}/delete")
+            {
+                Content = new StringContent("{}", Encoding.UTF8, "application/json")
+            }
+        };
+
+        string? lastBody = null;
+        HttpStatusCode? lastStatus = null;
+
+        foreach (var request in candidates)
+        {
+            using var response = await _httpClient.SendAsync(request);
+            lastStatus = response.StatusCode;
+
+            if (response.IsSuccessStatusCode)
+                return;
+
+            lastBody = await response.Content.ReadAsStringAsync();
+
+            if (response.StatusCode != HttpStatusCode.NotFound && response.StatusCode != HttpStatusCode.MethodNotAllowed)
+                throw new Exception(await ExtractErrorMessageAsync(response, "Could not delete item from order."));
+        }
+
+        throw new Exception(string.IsNullOrWhiteSpace(lastBody)
+            ? $"Could not delete item from order. Last status: {lastStatus}."
+            : lastBody);
+    }
+
     public async Task<TableOrderDetails?> GetCurrentOrderForTableAsync(int tableId)
     {
         var response = await _httpClient.GetAsync($"tables/{tableId}/orders");

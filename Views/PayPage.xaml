@@ -5,7 +5,7 @@
              BackgroundColor="{StaticResource BackGroundGray}">
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="16">
-            <Frame BackgroundColor="{StaticResource BackGroundGraylight}" >
+            <Frame BackgroundColor="{StaticResource BackGroundGraylight}" IsVisible="{Binding IsCashPaymentVisible}">
                 <VerticalStackLayout Spacing="8">
                     <Label Text="Payment" FontAttributes="Bold" FontSize="24" HorizontalOptions="Center" TextColor="White" />
                     <Label Text="{Binding CurrentOrderLabel}" HorizontalOptions="Center" />
@@ -13,7 +13,7 @@
                 </VerticalStackLayout>
             </Frame>
 
-            <Frame BackgroundColor="{StaticResource BackGroundGraylight}" IsVisible="{Binding IsCashPaymentVisible}">
+            <Frame BackgroundColor="{StaticResource BackGroundGraylight}">
                 <VerticalStackLayout Spacing="12" Padding="8">
                     <Label Text="Pay By Cash"
                            Margin="0,10,0,0"
