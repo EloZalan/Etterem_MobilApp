@@ -87,9 +87,10 @@ public class TablesViewModel : BaseViewModel
         if (table is null)
             return;
 
-        if (table.Reservation?.StartTime is DateTime reservationStart && reservationStart > DateTime.Now)
+        var reservationStart = GetReservationStartInLocalTime(table);
+        if (reservationStart.HasValue && reservationStart.Value > DateTime.Now)
         {
-            var reservationTimeText = reservationStart.ToString("HH:mm");
+            var reservationTimeText = reservationStart.Value.ToString("HH:mm");
             await Shell.Current.DisplayAlert(
                 "Reservation not active yet",
                 $"This reservation is for {reservationTimeText}. You cannot open this table yet.",
@@ -101,6 +102,20 @@ public class TablesViewModel : BaseViewModel
         {
             ["SelectedTable"] = table
         });
+    }
+
+    private static DateTime? GetReservationStartInLocalTime(RestaurantTable table)
+    {
+        var start = table.Reservation?.StartTime;
+        if (!start.HasValue)
+            return null;
+
+        return start.Value.Kind switch
+        {
+            DateTimeKind.Utc => start.Value.ToLocalTime(),
+            DateTimeKind.Unspecified => DateTime.SpecifyKind(start.Value, DateTimeKind.Local),
+            _ => start.Value
+        };
     }
 
     private async Task LogoutAsync()

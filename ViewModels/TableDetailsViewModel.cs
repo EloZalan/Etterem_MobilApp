@@ -52,7 +52,11 @@ public class TableDetailsViewModel : BaseViewModel
     public Order? CurrentOrder
     {
         get => _currentOrder;
-        set => SetProperty(ref _currentOrder, value);
+        set
+        {
+            if (SetProperty(ref _currentOrder, value))
+                RefreshComputedProperties();
+        }
     }
 
     public ObservableCollection<MenuCategory> Categories { get; }
