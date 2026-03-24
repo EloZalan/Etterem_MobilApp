@@ -4,6 +4,9 @@
              xmlns:tool="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="WaiterApp.Views.LoginPage"
              BackgroundColor="{x:StaticResource BackGroundGray}">
+    <ContentPage.Behaviors>
+        <tool:StatusBarBehavior StatusBarColor="{x:StaticResource Black}"/>
+    </ContentPage.Behaviors>
     <ContentPage.Resources>
         <ResourceDictionary>
             <Style x:Key="BackgroundStyle" TargetType="ContentPage">
