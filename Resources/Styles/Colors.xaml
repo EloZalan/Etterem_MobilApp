@@ -12,12 +12,12 @@
     <Color x:Key="Secondary">#DFD8F7</Color>
     <Color x:Key="SecondaryDarkText">#9880e5</Color>
     <Color x:Key="Tertiary">#ff6a00</Color>
-    <Color x:Key="BackGroundGray">#303030</Color>
-    <Color x:Key="BackGroundGraylight">#363636</Color>
+    <Color x:Key="BackGroundGray">#191919</Color>
+    <Color x:Key="BackGroundGraylight">#343434</Color>
     
 
     <Color x:Key="White">White</Color>
-    <Color x:Key="Black">#363636</Color>
+    <Color x:Key="Black">Black</Color>
     <Color x:Key="Magenta">#D600AA</Color>
     <Color x:Key="MidnightBlue">#190649</Color>
     <Color x:Key="OffBlack">#1f1f1f</Color>
