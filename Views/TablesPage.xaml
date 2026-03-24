@@ -21,7 +21,7 @@
                         </VerticalStackLayout>
                             
                         
-                        <HorizontalStackLayout Spacing="12" Padding="0,0,0,10">
+                        <HorizontalStackLayout Spacing="9" Padding="0,0,0,10">
                             <Button Text="Take Shift"
                                     Command="{Binding TakeShiftCommand}"
                                     IsVisible="{Binding IsOnShift, Converter={StaticResource InverseBoolConverter}}" />
@@ -33,7 +33,7 @@
                             <Button Text="Reservation"
                                     Clicked="OnWalkInReservationClicked" 
                                     IsVisible="{Binding IsOnShift}"/>
-                            <Button Text="R"
+                        <Button Text="" ImageSource="refresh.png" HeightRequest="45" WidthRequest="45"
                                     Command="{Binding LoadCommand}" />
                         </HorizontalStackLayout>
                         
