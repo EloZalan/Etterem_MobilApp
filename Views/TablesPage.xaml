@@ -28,13 +28,19 @@
                             <Button Text="Drop Shift"
                                     Command="{Binding DropShiftCommand}"
                                     IsVisible="{Binding IsOnShift}" />
-                            <Button Text="Logout"
-                                    Command="{Binding LogoutCommand}" />
                             <Button Text="Reservation"
                                     Clicked="OnWalkInReservationClicked" 
                                     IsVisible="{Binding IsOnShift}"/>
-                        <Button Text="" ImageSource="refresh.png" HeightRequest="45" WidthRequest="45"
-                                    Command="{Binding LoadCommand}" />
+                            <Button ImageSource="logout.png"
+                                    HorizontalOptions="End"
+                                    HeightRequest="45"
+                                    WidthRequest="45"
+                                    Command="{Binding LogoutCommand}" />
+                        <Button ImageSource="refresh.png" 
+                                HorizontalOptions="End"
+                                HeightRequest="45" 
+                                WidthRequest="45"
+                                Command="{Binding LoadCommand}" />
                         </HorizontalStackLayout>
                         
                         <Label Text="{Binding StatusMessage}"
