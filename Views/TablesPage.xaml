@@ -19,9 +19,10 @@
                                    TextColor="White" 
                                    Padding="5,0,0,10"/>
                         </VerticalStackLayout>
-                            
+
+                    <HorizontalStackLayout Padding="0,0,0,10">
                         
-                        <HorizontalStackLayout Spacing="9" Padding="0,0,0,10">
+                        <HorizontalStackLayout Spacing="9" HorizontalOptions="Start">
                             <Button Text="Take Shift"
                                     Command="{Binding TakeShiftCommand}"
                                     IsVisible="{Binding IsOnShift, Converter={StaticResource InverseBoolConverter}}" />
@@ -31,17 +32,20 @@
                             <Button Text="Reservation"
                                     Clicked="OnWalkInReservationClicked" 
                                     IsVisible="{Binding IsOnShift}"/>
-                            <Button ImageSource="logout.png"
-                                    HorizontalOptions="End"
-                                    HeightRequest="45"
-                                    WidthRequest="45"
-                                    Command="{Binding LogoutCommand}" />
-                        <Button ImageSource="refresh.png" 
-                                HorizontalOptions="End"
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="9" Padding="15,0,0,0">
+                            
+                            <Button ImageSource="refresh.png" 
                                 HeightRequest="45" 
                                 WidthRequest="45"
                                 Command="{Binding LoadCommand}" />
+                            <Button ImageSource="logout.png"
+                                    BackgroundColor="Red"
+                                    HeightRequest="45"
+                                    WidthRequest="45"
+                                    Command="{Binding LogoutCommand}" />
                         </HorizontalStackLayout>
+                    </HorizontalStackLayout>
                         
                         <Label Text="{Binding StatusMessage}"
                                TextColor="White" />

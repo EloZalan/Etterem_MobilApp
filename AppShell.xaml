@@ -6,7 +6,7 @@
     xmlns:views="clr-namespace:WaiterApp.Views"
     Shell.FlyoutBehavior="Disabled">
     <!--Shell.BackgroundColor="{x:StaticResource BackGroundGraylight}">-->
-
+    
     <ShellContent Route="login" ContentTemplate="{DataTemplate views:LoginPage}" />
     <ShellContent Route="tables" ContentTemplate="{DataTemplate views:TablesPage}" />
     <ShellContent Route="tableDetails" ContentTemplate="{DataTemplate views:TableDetailsPage}" />
