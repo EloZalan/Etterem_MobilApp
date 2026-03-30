@@ -38,7 +38,11 @@
                            FontAttributes="Bold"
                            TextColor="White" />
 
-                    <Button Text="Confirm Card Payment"
+                    <Label Text="Use the device NFC reader. As soon as any NFC card/tag is detected, the payment will complete."
+                           HorizontalTextAlignment="Center"
+                           TextColor="LightGray" />
+
+                    <Button Text="Start NFC Card Payment"
                             HorizontalOptions="Center"
                             BackgroundColor="#1F51FF"
                             TextColor="White"

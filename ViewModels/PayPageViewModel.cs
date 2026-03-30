@@ -1,21 +1,24 @@
 using System.Windows.Input;
 using WaiterApp.Models;
 using WaiterApp.Services;
+using WaiterApp.Services.Payments;
 
 namespace WaiterApp.ViewModels;
 
 public class PayPageViewModel : BaseViewModel
 {
     private readonly IApiService _apiService;
+    private readonly INfcPaymentService _nfcPaymentService;
     private Order? _currentOrder;
     private string _statusMessage = "Choose a payment method.";
     private string _selectedPaymentMethod = string.Empty;
 
-    public PayPageViewModel(IApiService apiService)
+    public PayPageViewModel(IApiService apiService, INfcPaymentService nfcPaymentService)
     {
         _apiService = apiService;
+        _nfcPaymentService = nfcPaymentService;
         PayCashCommand = new Command(async () => await PayAsync("cash"), () => !IsBusy);
-        PayCardCommand = new Command(async () => await PayAsync("card"), () => !IsBusy);
+        PayCardCommand = new Command(async () => await PayByCardAsync(), () => !IsBusy);
     }
 
     public Order? CurrentOrder
@@ -51,7 +54,7 @@ public class PayPageViewModel : BaseViewModel
                 StatusMessage = normalized switch
                 {
                     "cash" => "Confirm cash payment.",
-                    "card" => "Confirm card payment.",
+                    "card" => "Tap the card on the NFC reader to complete payment.",
                     _ => "Choose a payment method."
                 };
             }
@@ -70,6 +73,38 @@ public class PayPageViewModel : BaseViewModel
     public ICommand PayCashCommand { get; }
     public ICommand PayCardCommand { get; }
 
+    private async Task PayByCardAsync()
+    {
+        if (IsBusy)
+            return;
+
+        if (CurrentOrder is null)
+        {
+            StatusMessage = "No order is open.";
+            return;
+        }
+
+        if (!_nfcPaymentService.IsSupported)
+        {
+            StatusMessage = "NFC payment is not supported on this device.";
+            await Shell.Current.DisplayAlert("NFC not available", StatusMessage, "OK");
+            return;
+        }
+
+        StatusMessage = "Waiting for NFC card...";
+
+        var scanResult = await _nfcPaymentService.WaitForTapAsync();
+        if (!scanResult.IsSuccess)
+        {
+            StatusMessage = scanResult.Message;
+            await Shell.Current.DisplayAlert("NFC payment", scanResult.Message, "OK");
+            return;
+        }
+
+        StatusMessage = scanResult.Message;
+        await PayAsync("card");
+    }
+
     private async Task PayAsync(string method)
     {
         if (IsBusy)
@@ -84,7 +119,7 @@ public class PayPageViewModel : BaseViewModel
         try
         {
             IsBusy = true;
-            StatusMessage = "Processing payment...";
+            StatusMessage = method == "card" ? "NFC detected. Processing card payment..." : "Processing payment...";
 
             var payment = await _apiService.PayOrderAsync(CurrentOrder.Id, new PayOrderRequest
             {
@@ -93,9 +128,13 @@ public class PayPageViewModel : BaseViewModel
 
             CurrentOrder.Status = payment.OrderStatus;
             OnPropertyChanged(nameof(CurrentOrderLabel));
-            StatusMessage = $"Payment successful with {method}.";
+            StatusMessage = method == "card" ? "Card payment completed successfully." : $"Payment successful with {method}.";
 
-            await Shell.Current.DisplayAlert("Success", $"Order #{CurrentOrder.Id} was paid by {method}.", "OK");
+            var successMessage = method == "card"
+                ? $"Order #{CurrentOrder.Id} was paid by card using NFC."
+                : $"Order #{CurrentOrder.Id} was paid by {method}.";
+
+            await Shell.Current.DisplayAlert("Success", successMessage, "OK");
             await Shell.Current.GoToAsync("//tables");
         }
         catch (Exception ex)

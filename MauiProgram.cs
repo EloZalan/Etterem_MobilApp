@@ -2,6 +2,7 @@
 using MauiApp1;
 using Microsoft.Extensions.Logging;
 using WaiterApp.Services;
+using WaiterApp.Services.Payments;
 using WaiterApp.ViewModels;
 using WaiterApp.Views;
 
@@ -23,6 +24,11 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<IApiService, ApiService>();
         builder.Services.AddSingleton<IAuthService, AuthService>();
+#if ANDROID
+        builder.Services.AddSingleton<INfcPaymentService, WaiterApp.Platforms.Android.Services.AndroidNfcPaymentService>();
+#else
+        builder.Services.AddSingleton<INfcPaymentService, DefaultNfcPaymentService>();
+#endif
 
         builder.Services.AddSingleton<AppShell>();
         builder.Services.AddSingleton<LoginPage>();
