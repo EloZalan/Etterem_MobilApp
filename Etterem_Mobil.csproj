@@ -21,7 +21,7 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>Etterem_MobilApp</ApplicationTitle>
+		<ApplicationTitle>Grill House</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.mauiapp1</ApplicationId>
