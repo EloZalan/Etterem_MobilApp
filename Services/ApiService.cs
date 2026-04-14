@@ -20,6 +20,7 @@ public class ApiService : IApiService
     {
         _httpClient = new HttpClient
         {
+            //BaseAddress = new Uri("https://jcloud02.jedlik.eu/schmitzhofer.pal/backend/api/")
             BaseAddress = new Uri("http://10.0.2.2:8000/api/")
         };
 
@@ -185,7 +186,7 @@ public class ApiService : IApiService
         Console.WriteLine($"TAKE SHIFT STATUS: {(int)response.StatusCode} {response.StatusCode}");
         Console.WriteLine($"TAKE SHIFT BODY: {await response.Content.ReadAsStringAsync()}");
 
-        await EnsureSuccessWithMessage(response, "Take shift failed.");
+        //await EnsureSuccessWithMessage(response, "Take shift failed.");
     }
 
     public async Task LogoutAsync()

@@ -136,10 +136,10 @@ public class TablesViewModel : BaseViewModel
         try
         {
             await _apiService.DropShiftAsync();
+            await LoadAsync();
+            StatusMessage = "Shift dropped successfully.";
             IsOnShift = false;
 
-            StatusMessage = "Shift dropped successfully.";
-            await LoadAsync();
         }
         catch (Exception ex)
         {
@@ -162,14 +162,16 @@ public class TablesViewModel : BaseViewModel
         try
         {
             await _apiService.TakeShiftAsync();
+            await LoadAsync();
+            await Shell.Current.DisplayAlert("", "Shift taken successfully.", "OK");
+            StatusMessage = "Success";
             IsOnShift = true;
 
-            StatusMessage = "Shift taken successfully.";
-            await LoadAsync();
         }
         catch (Exception ex)
         {
-            StatusMessage = ex.Message;
+            await Shell.Current.DisplayAlert("Hiba", ex.Message, "OK");
+            //StatusMessage = ex.Message;
         }
         finally
         {
