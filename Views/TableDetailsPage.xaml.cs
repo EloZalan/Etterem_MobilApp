@@ -8,6 +8,8 @@ namespace WaiterApp.Views;
 public partial class TableDetailsPage : ContentPage, IQueryAttributable
 {
     private readonly TableDetailsViewModel _viewModel;
+    private CancellationTokenSource? _refreshCancellationTokenSource;
+    private static readonly TimeSpan RefreshInterval = TimeSpan.FromSeconds(10);
 
     public TableDetailsPage(TableDetailsViewModel viewModel)
     {
@@ -32,5 +34,42 @@ public partial class TableDetailsPage : ContentPage, IQueryAttributable
     {
         base.OnAppearing();
         await _viewModel.LoadAsync();
+        StartAutoRefresh();
+    }
+
+    protected override void OnDisappearing()
+    {
+        StopAutoRefresh();
+        base.OnDisappearing();
+    }
+
+    private void StartAutoRefresh()
+    {
+        StopAutoRefresh();
+        _refreshCancellationTokenSource = new CancellationTokenSource();
+        _ = RunAutoRefreshAsync(_refreshCancellationTokenSource.Token);
+    }
+
+    private void StopAutoRefresh()
+    {
+        _refreshCancellationTokenSource?.Cancel();
+        _refreshCancellationTokenSource?.Dispose();
+        _refreshCancellationTokenSource = null;
+    }
+
+    private async Task RunAutoRefreshAsync(CancellationToken cancellationToken)
+    {
+        using var timer = new PeriodicTimer(RefreshInterval);
+
+        try
+        {
+            while (await timer.WaitForNextTickAsync(cancellationToken))
+            {
+                await _viewModel.RefreshOrderSnapshotAsync();
+            }
+        }
+        catch (OperationCanceledException)
+        {
+        }
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Text;
+using Microsoft.Maui.ApplicationModel;
 using System.Windows.Input;
 using WaiterApp.Models;
 using WaiterApp.Services;
@@ -50,13 +51,29 @@ public class TablesViewModel : BaseViewModel
     }
     public async Task LoadAsync()
     {
-
-
         if (IsBusy)
             return;
 
         IsBusy = true;
         StatusMessage = string.Empty;
+
+        try
+        {
+            await RefreshTablesAsync(updateBusyState: false);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    public async Task RefreshTablesAsync(bool updateBusyState = false)
+    {
+        if (updateBusyState && IsBusy)
+            return;
+
+        if (updateBusyState)
+            IsBusy = true;
 
         try
         {
@@ -67,18 +84,27 @@ public class TablesViewModel : BaseViewModel
                 .Where(t => t.WaiterId is null || t.WaiterId == currentWaiterId)
                 .ToList();
 
-            SplitTables(visibleTables);
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                SplitTables(visibleTables);
 
-            if (Tables.Count == 0)
-                StatusMessage = "No tables assigned to this waiter.";
+                if (BusyTables.Count == 0 && AvailableTables.Count == 0)
+                    StatusMessage = "No tables assigned to this waiter.";
+                else if (StatusMessage == "No tables assigned to this waiter.")
+                    StatusMessage = string.Empty;
+            });
         }
         catch (Exception ex)
         {
-            StatusMessage = Encoding.UTF8.GetString(Encoding.Default.GetBytes(ex.Message));
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                StatusMessage = Encoding.UTF8.GetString(Encoding.Default.GetBytes(ex.Message));
+            });
         }
         finally
         {
-            IsBusy = false;
+            if (updateBusyState)
+                IsBusy = false;
         }
     }
 
@@ -90,7 +116,7 @@ public class TablesViewModel : BaseViewModel
         var reservationStart = GetReservationStartInLocalTime(table);
         if (reservationStart.HasValue && reservationStart.Value > DateTime.Now)
         {
-            var reservationTimeText = reservationStart.Value.ToString("HH:mm");
+            var reservationTimeText = (reservationStart.Value).AddHours(2).ToString("HH:mm");
             await Shell.Current.DisplayAlert(
                 "Reservation not active yet",
                 $"This reservation is for {reservationTimeText}. You cannot open this table yet.",
@@ -182,7 +208,6 @@ public class TablesViewModel : BaseViewModel
 
     public async Task LoadTablesOnlyAsync()
     {
-        Tables.Clear();
         var allTables = await _apiService.GetTablesAsync();
 
         var currentWaiterId = _authService.CurrentUser?.Id;
@@ -191,8 +216,12 @@ public class TablesViewModel : BaseViewModel
             .OrderBy(t => t.Id)
             .ToList();
 
-        foreach (var table in visibleTables)
-            Tables.Add(table);
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            Tables.Clear();
+            foreach (var table in visibleTables)
+                Tables.Add(table);
+        });
     }
 
     public async Task CreateWalkInReservationAndOpenOrderAsync(int guestCount)

@@ -1,5 +1,6 @@
 //using Android.Webkit;
 using System.Collections.ObjectModel;
+using Microsoft.Maui.ApplicationModel;
 using System.Windows.Input;
 using WaiterApp.Models;
 using WaiterApp.Services;
@@ -126,50 +127,8 @@ public class TableDetailsViewModel : BaseViewModel
 
         try
         {
-            Categories.Clear();
-            MenuItems.Clear();
-
-            var categories = await _apiService.GetMenuCategoriesAsync();
-            foreach (var category in categories.OrderBy(c => c.Name))
-                Categories.Add(category);
-
-            _allMenuItems = await _apiService.GetMenuItemsAsync();
-            SelectedCategory = Categories.FirstOrDefault();
-
-            if (SelectedTable is not null)
-            {
-                var existingOrder = await _apiService.GetCurrentOrderForTableAsync(SelectedTable.Id);
-
-                if (existingOrder?.HasOpenOrder == true)
-                {
-                    CurrentOrder = new Order
-                    {
-                        Id = existingOrder.OrderId!.Value,
-                        TableId = existingOrder.TableId ?? SelectedTable.Id,
-                        ReservationId = existingOrder.ReservationId ?? 0,
-                        TotalPrice = existingOrder.TotalPrice,
-                        Status = existingOrder.Status ?? "in_progress"
-                    };
-
-                    await RefreshOrderDetailsAsync();
-                    RefreshComputedProperties();
-                    StatusMessage = $"Existing order loaded for table {SelectedTable.Id}.";
-                    return;
-                }
-            }
-
-            ClearOrderItems();
-            RefreshComputedProperties();
-
-            if (AutoOpenOrder && SelectedTable is not null && CurrentOrder is null)
-            {
-                AutoOpenOrder = false;
-                await OpenOrderAsync();
-            }
-            else if (CurrentOrder is null)
-            {
-                StatusMessage = "Open an order for this table or continue adding items.";
-            }
+            await LoadStaticDataAsync();
+            await RefreshOrderSnapshotAsync();
         }
         catch (Exception ex)
         {
@@ -179,6 +138,80 @@ public class TableDetailsViewModel : BaseViewModel
         {
             IsBusy = false;
         }
+    }
+
+    public async Task RefreshOrderSnapshotAsync()
+    {
+        try
+        {
+            if (SelectedTable is not null)
+            {
+                var existingOrder = await _apiService.GetCurrentOrderForTableAsync(SelectedTable.Id);
+
+                if (existingOrder?.HasOpenOrder == true)
+                {
+                    if (CurrentOrder is null || CurrentOrder.Id != existingOrder.OrderId)
+                    {
+                        CurrentOrder = new Order
+                        {
+                            Id = existingOrder.OrderId!.Value,
+                            TableId = existingOrder.TableId ?? SelectedTable.Id,
+                            ReservationId = existingOrder.ReservationId ?? 0,
+                            TotalPrice = existingOrder.TotalPrice,
+                            Status = existingOrder.Status ?? "in_progress"
+                        };
+                    }
+
+                    await RefreshOrderDetailsAsync();
+                    RefreshComputedProperties();
+                    return;
+                }
+            }
+
+            CurrentOrder = null;
+            ClearOrderItems();
+            RefreshComputedProperties();
+
+            if (AutoOpenOrder && SelectedTable is not null)
+            {
+                AutoOpenOrder = false;
+                await OpenOrderAsync();
+            }
+            else
+            {
+                StatusMessage = "Open an order for this table or continue adding items.";
+            }
+        }
+        catch (Exception ex)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                StatusMessage = ex.Message;
+            });
+        }
+    }
+
+    private async Task LoadStaticDataAsync()
+    {
+        if (Categories.Count > 0 && _allMenuItems.Count > 0)
+            return;
+
+        var categories = await _apiService.GetMenuCategoriesAsync();
+        var menuItems = await _apiService.GetMenuItemsAsync();
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            Categories.Clear();
+            foreach (var category in categories.OrderBy(c => c.Name))
+                Categories.Add(category);
+
+            _allMenuItems = menuItems;
+
+            if (SelectedCategory is null || Categories.All(c => c.Id != SelectedCategory.Id))
+                SelectedCategory = Categories.FirstOrDefault();
+            else
+                FilterMenuItems();
+        });
     }
 
     private List<WaiterMenuItems> _allMenuItems = new();
@@ -351,19 +384,24 @@ public class TableDetailsViewModel : BaseViewModel
         }
 
         var details = await _apiService.GetCurrentOrderForTableAsync(SelectedTable.Id);
-        TableOrderDetails = details;
 
-        OrderItems.Clear();
-        foreach (var item in details?.Items ?? Enumerable.Empty<TableOrderItem>())
-            OrderItems.Add(item);
-
-        if (details?.OrderId is not null && CurrentOrder is not null)
+        MainThread.BeginInvokeOnMainThread(() =>
         {
-            CurrentOrder.TotalPrice = details.TotalPrice;
-            CurrentOrder.Status = details.Status ?? CurrentOrder.Status;
-        }
+            TableOrderDetails = details;
 
-        OnPropertyChanged(nameof(HasOrderItems));
+            OrderItems.Clear();
+            foreach (var item in details?.Items ?? Enumerable.Empty<TableOrderItem>())
+                OrderItems.Add(item);
+
+            if (details?.OrderId is not null && CurrentOrder is not null)
+            {
+                CurrentOrder.TotalPrice = details.TotalPrice;
+                CurrentOrder.Status = details.Status ?? CurrentOrder.Status;
+            }
+
+            OnPropertyChanged(nameof(HasOrderItems));
+            OnPropertyChanged(nameof(CurrentOrderLabel));
+        });
     }
 
     private void ClearOrderItems()
