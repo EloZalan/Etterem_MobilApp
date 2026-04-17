@@ -51,7 +51,7 @@ public class AuthService : IAuthService
         }
         catch
         {
-            // Intentionally swallow; local logout should proceed regardless of remote result.
+            
         }
 
         Token = null;

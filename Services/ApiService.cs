@@ -21,7 +21,6 @@ public class ApiService : IApiService
         _httpClient = new HttpClient
         {
             BaseAddress = new Uri("https://jcloud02.jedlik.eu/schmitzhofer.pal/backend/api/")
-            //BaseAddress = new Uri("http://10.0.2.2:8000/api/")
         };
 
         _httpClient.DefaultRequestHeaders.Accept.Add(
@@ -42,35 +41,30 @@ public class ApiService : IApiService
         if (response.StatusCode == HttpStatusCode.Unauthorized)
             throw new Exception("Invalid email or password.");
 
-        //await EnsureSuccessWithMessage(response, "Login failed.");
         return await ReadAsync<LoginResponse>(response) ?? new LoginResponse();
     }
 
     public async Task<User?> GetCurrentUserAsync()
     {
         var response = await _httpClient.GetAsync("user");
-        //await EnsureSuccessWithMessage(response, "Could not load current user.");
         return await ReadAsync<User>(response);
     }
 
     public async Task<List<RestaurantTable>> GetTablesAsync()
     {
         var response = await _httpClient.GetAsync("tables");
-        //await EnsureSuccessWithMessage(response, "Could not load tables.");
         return await ReadAsync<List<RestaurantTable>>(response) ?? new List<RestaurantTable>();
     }
 
     public async Task<List<MenuCategory>> GetMenuCategoriesAsync()
     {
         var response = await _httpClient.GetAsync("menu-categories");
-        //await EnsureSuccessWithMessage(response, "Could not load menu categories.");
         return await ReadAsync<List<MenuCategory>>(response) ?? new List<MenuCategory>();
     }
 
     public async Task<List<WaiterMenuItems>> GetMenuItemsAsync()
     {
         var response = await _httpClient.GetAsync("menu-items");
-        //await EnsureSuccessWithMessage(response, "Could not load menu items.");
         return await ReadAsync<List<WaiterMenuItems>>(response) ?? new List<WaiterMenuItems>();
     }
 
@@ -82,7 +76,6 @@ public class ApiService : IApiService
             throw new Exception(await ExtractErrorMessageAsync(response,
                 "Cannot open order for this table. The table may already have an open order or no valid reservation exists."));
 
-        //await EnsureSuccessWithMessage(response, "Could not open order.");
         return await ReadAsync<Order>(response) ?? throw new Exception("Order response was empty.");
     }
 
@@ -93,7 +86,6 @@ public class ApiService : IApiService
         if (response.StatusCode == HttpStatusCode.BadRequest)
             throw new Exception(await ExtractErrorMessageAsync(response, "The order cannot be modified anymore."));
 
-        //await EnsureSuccessWithMessage(response, "Could not add item to order.");
     }
 
     public async Task DeleteOrderItemAsync(int orderId, int orderItemId)
@@ -141,8 +133,6 @@ public class ApiService : IApiService
         if (response.StatusCode == HttpStatusCode.BadRequest)
             return null;
 
-        //await EnsureSuccessWithMessage(response, "Could not load the current order for this table.");
-
         return await ReadAsync<TableOrderDetails>(response);
     }
 
@@ -153,7 +143,6 @@ public class ApiService : IApiService
         if ((int)response.StatusCode == 422)
             throw new Exception(await ExtractErrorMessageAsync(response, "No payable order found."));
 
-        //await EnsureSuccessWithMessage(response, "Could not set order to ready-to-pay.");
     }
 
     public async Task<PaymentResponse> PayOrderAsync(int orderId, PayOrderRequest request)
@@ -163,7 +152,6 @@ public class ApiService : IApiService
         if (response.StatusCode == HttpStatusCode.BadRequest)
             throw new Exception(await ExtractErrorMessageAsync(response, "Order status is not valid for payment."));
 
-        //await EnsureSuccessWithMessage(response, "Payment failed.");
         return await ReadAsync<PaymentResponse>(response) ?? new PaymentResponse();
     }
 
@@ -174,8 +162,6 @@ public class ApiService : IApiService
 
         Console.WriteLine($"END SHIFT STATUS: {(int)response.StatusCode} {response.StatusCode}");
         Console.WriteLine($"END SHIFT BODY: {await response.Content.ReadAsStringAsync()}");
-
-        //await EnsureSuccessWithMessage(response, "End shift failed.");
     }
 
     public async Task TakeShiftAsync()
@@ -185,8 +171,6 @@ public class ApiService : IApiService
 
         Console.WriteLine($"TAKE SHIFT STATUS: {(int)response.StatusCode} {response.StatusCode}");
         Console.WriteLine($"TAKE SHIFT BODY: {await response.Content.ReadAsStringAsync()}");
-
-        //await EnsureSuccessWithMessage(response, "Take shift failed.");
     }
 
     public async Task LogoutAsync()
@@ -197,7 +181,6 @@ public class ApiService : IApiService
         Console.WriteLine($"LOGOUT STATUS: {(int)response.StatusCode} {response.StatusCode}");
         Console.WriteLine($"LOGOUT BODY: {await response.Content.ReadAsStringAsync()}");
 
-        //await EnsureSuccessWithMessage(response, "Logout failed.");
     }
 
     private async Task<HttpResponseMessage> PostAsync<T>(string uri, T data, bool requiresSuccess = true)
@@ -260,9 +243,6 @@ public class ApiService : IApiService
 
         if ((int)response.StatusCode == 422)
             throw new Exception("No free table is available right now.");
-
-        //await EnsureSuccessWithMessage(response, "Could not create walk-in reservation.");
-
         return await ReadAsync<Reservation>(response)
                ?? throw new Exception("Walk-in reservation response was empty.");
     }

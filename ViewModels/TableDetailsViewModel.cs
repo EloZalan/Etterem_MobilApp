@@ -1,4 +1,3 @@
-//using Android.Webkit;
 using System.Collections.ObjectModel;
 using Microsoft.Maui.ApplicationModel;
 using System.Windows.Input;
@@ -32,8 +31,6 @@ public class TableDetailsViewModel : BaseViewModel
         AddItemCommand = new Command(async () => await AddItemAsync());
         DeleteOrderItemCommand = new Command<TableOrderItem>(async item => await DeleteOrderItemAsync(item));
         MarkReadyCommand = new Command(async () => await MarkReadyAsync());
-        PayCashCommand = new Command(async () => await PayAsync("cash"));
-        PayCardCommand = new Command(async () => await PayAsync("card"));
         GoToPayCommand = new Command<string>(async method => await GoToPay(method ?? string.Empty));
         IncreaseQuantityCommand = new Command(() => Quantity++);
         DecreaseQuantityCommand = new Command(() => { if (Quantity > 1) Quantity--; });
@@ -111,8 +108,6 @@ public class TableDetailsViewModel : BaseViewModel
     public ICommand AddItemCommand { get; }
     public ICommand DeleteOrderItemCommand { get; }
     public ICommand MarkReadyCommand { get; }
-    public ICommand PayCashCommand { get; }
-    public ICommand PayCardCommand { get; }
     public ICommand IncreaseQuantityCommand { get; }
     public ICommand DecreaseQuantityCommand { get; }
     public ICommand GoToPayCommand { get; }
@@ -334,30 +329,6 @@ public class TableDetailsViewModel : BaseViewModel
         }
     }
 
-    private async Task PayAsync(string method)
-    {
-        if (CurrentOrder is null)
-        {
-            StatusMessage = "No order is open.";
-            return;
-        }
-
-        try
-        {
-            var payment = await _apiService.PayOrderAsync(CurrentOrder.Id, new PayOrderRequest
-            {
-                PaymentMethod = method
-            });
-
-            CurrentOrder.Status = payment.OrderStatus;
-            StatusMessage = $"Payment successful with {method}.";
-            RefreshComputedProperties();
-        }
-        catch (Exception ex)
-        {
-            StatusMessage = ex.Message;
-        }
-    }
     private async Task GoToPay(string method)
     {
         if (CurrentOrder is null)

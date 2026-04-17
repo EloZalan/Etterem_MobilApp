@@ -37,7 +37,6 @@ public class TablesViewModel : BaseViewModel
         set => SetProperty(ref _statusMessage, value);
     }
 
-    public string WaiterName => _authService.CurrentUser?.Name ?? "Waiter";
 
     public ICommand LoadCommand { get; }
     public ICommand LogoutCommand { get; }
@@ -45,10 +44,7 @@ public class TablesViewModel : BaseViewModel
     public ICommand TakeShiftCommand { get; }
     public ICommand OpenTableCommand { get; }
 
-    public class ApiError
-    {
-        public string Message { get; set; } = string.Empty;
-    }
+    
     public async Task LoadAsync()
     {
         if (IsBusy)
