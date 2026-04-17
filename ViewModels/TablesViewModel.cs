@@ -37,7 +37,7 @@ public class TablesViewModel : BaseViewModel
         set => SetProperty(ref _statusMessage, value);
     }
 
-
+    public string WaiterName => _authService.CurrentUser?.Name ?? "Waiter";
     public ICommand LoadCommand { get; }
     public ICommand LogoutCommand { get; }
     public ICommand DropShiftCommand { get; }
@@ -185,15 +185,14 @@ public class TablesViewModel : BaseViewModel
         {
             await _apiService.TakeShiftAsync();
             await LoadAsync();
-            await Shell.Current.DisplayAlert("", "Shift taken successfully.", "OK");
-            StatusMessage = "Success";
+            await Shell.Current.DisplayAlert("", "Sikeresen munkába állt.", "OK");
+            StatusMessage = "Sikeres";
             IsOnShift = true;
 
         }
         catch (Exception ex)
         {
             await Shell.Current.DisplayAlert("Hiba", ex.Message, "OK");
-            //StatusMessage = ex.Message;
         }
         finally
         {
@@ -227,7 +226,22 @@ public class TablesViewModel : BaseViewModel
 
         if (!IsOnShift)
         {
-            StatusMessage = "You must take shift before creating a walk-in reservation.";
+            StatusMessage = "Elösszõr vedd fel a mûszakot";
+            return;
+        }
+
+        var hasEnoughCapacity = AvailableTables.Any(t => t.Capacity >= guestCount);
+        if (!hasEnoughCapacity)
+        {
+            await MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                await Application.Current!.MainPage!.DisplayAlert(
+                    "Foglalás error",
+                    $"Nem lehet {guestCount} fõre foglalni, mert nincs ennyi férõhelyes szabad asztal.",
+                    "OK");
+            });
+
+            StatusMessage = $"Nincs asztal {guestCount} fõre.";
             return;
         }
 
@@ -240,7 +254,7 @@ public class TablesViewModel : BaseViewModel
 
             await LoadTablesOnlyAsync();
 
-            StatusMessage = $"Reservation created successfully. Table {reservation.TableId} is reserved for {guestCount} guest(s).";
+            StatusMessage = $"Sikeres foglalás. Asztal {reservation.TableId} készen áll {guestCount} fõre.";
 
             var table = Tables.FirstOrDefault(t => t.Id == reservation.TableId);
             if (table is not null)
@@ -260,8 +274,8 @@ public class TablesViewModel : BaseViewModel
         {
             IsBusy = false;
         }
-        await LoadAsync();
 
+        await LoadAsync();
     }
 
     private void SplitTables(IEnumerable<RestaurantTable> tables)

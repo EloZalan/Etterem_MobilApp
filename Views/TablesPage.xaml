@@ -10,12 +10,12 @@
                 <Frame BackgroundColor="{x:StaticResource BackGroundGraylight}" Padding="15" >
                     <VerticalStackLayout>
                         <VerticalStackLayout Spacing="4">
-                            <Label Text="Tables"
+                            <Label Text="Asztalok"
                                    FontSize="28"
                                    FontAttributes="Bold"
                                    TextColor="White" 
                                    />
-                            <Label Text="{Binding WaiterName, StringFormat='Logged in as: {0}'}"
+                            <Label Text="{Binding WaiterName, StringFormat='Belépve:  {0}'}"
                                    TextColor="White" 
                                    Padding="5,0,0,10"/>
                         </VerticalStackLayout>
@@ -23,13 +23,13 @@
                     <HorizontalStackLayout Padding="0,0,0,10">
                         
                         <HorizontalStackLayout Spacing="9" HorizontalOptions="Start">
-                            <Button Text="Take Shift"
+                            <Button Text="Műszak kezdése"
                                     Command="{Binding TakeShiftCommand}"
                                     IsVisible="{Binding IsOnShift, Converter={StaticResource InverseBoolConverter}}" />
-                            <Button Text="Drop Shift"
+                            <Button Text="Műszak leadás"
                                     Command="{Binding DropShiftCommand}"
                                     IsVisible="{Binding IsOnShift}" />
-                            <Button Text="Reservation"
+                            <Button Text="Foglalás"
                                     Clicked="OnWalkInReservationClicked" 
                                     IsVisible="{Binding IsOnShift}"/>
                         </HorizontalStackLayout>
@@ -47,12 +47,12 @@
                         </HorizontalStackLayout>
                     </HorizontalStackLayout>
                         
-                        <Label Text="{Binding StatusMessage}"
-                               TextColor="White" />
+                        <!--<Label Text="{Binding StatusMessage}"
+                               TextColor="White" />-->
                         
                     </VerticalStackLayout>
                 </Frame>    
-                        <Label Text="Reserved / Occupied"
+                        <Label Text="Foglalt asztalok"
                                FontSize="22"
                                FontAttributes="Bold"
                                TextColor="White" 
@@ -83,7 +83,7 @@
                                 </VerticalStackLayout>
 
                                 <Button Grid.Column="1"
-                                        Text="Open"
+                                        Text="Kezelés"
                                         VerticalOptions="Center"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenTableCommand}"
                                         CommandParameter="{Binding .}" />
@@ -93,7 +93,7 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <Label Text="Available"
+            <Label Text="Szabad asztalok"
                    FontSize="22"
                    FontAttributes="Bold"
                    TextColor="White" 

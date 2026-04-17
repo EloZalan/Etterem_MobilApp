@@ -23,12 +23,12 @@
 
     <ScrollView>
         <VerticalStackLayout Padding="24" Spacing="18" VerticalOptions="Center">
-            <Label Text="Waiter Login"
+            <Label Text="Pincér bejelentkezés"
                    FontSize="30"
                    FontAttributes="Bold" 
                    TextColor="{x:StaticResource Primary}"/>
 
-            <Label Text="Sign in to manage your tables and orders."
+            <Label Text="Jelentkezz be és már kezelheted az asztalodat."
                    TextColor="White"/>
 
             <Entry Placeholder="Email"
@@ -36,11 +36,11 @@
                    Text="{Binding Email}" 
                    />
 
-            <Entry Placeholder="Password"
+            <Entry Placeholder="Jelszó"
                    IsPassword="True"
                    Text="{Binding Password}" />
 
-            <Button Text="Login"
+            <Button Text="Bejelentkezés"
                     Command="{Binding LoginCommand}"
                     Style="{StaticResource PrimaryButtonStyle}" />
 

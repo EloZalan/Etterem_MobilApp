@@ -17,7 +17,7 @@ public class PayPageViewModel : BaseViewModel
     {
         _apiService = apiService;
         _nfcPaymentService = nfcPaymentService;
-        PayCashCommand = new Command(async () => await PayAsync("cash"), () => !IsBusy);
+        PayCashCommand = new Command(async () => await PayAsync("Készpénzel"), () => !IsBusy);
         PayCardCommand = new Command(async () => await PayByCardAsync(), () => !IsBusy);
     }
 
@@ -29,16 +29,16 @@ public class PayPageViewModel : BaseViewModel
             if (SetProperty(ref _currentOrder, value))
             {
                 StatusMessage = value is null
-                    ? "No order selected."
-                    : $"Order #{value.Id} is ready to be paid.";
+                    ? "Nincs kiválasztott rendelés."
+                    : $"Rendelés #{value.Id} készen áll a fizetésre.";
                 OnPropertyChanged(nameof(CurrentOrderLabel));
             }
         }
     }
 
     public string CurrentOrderLabel => CurrentOrder is null
-        ? "No order selected"
-        : $"Order #{CurrentOrder.Id} • {CurrentOrder.Status} • {CurrentOrder.TotalPriceLabel}";
+        ? "Nincs kiválasztott rendelés"
+        : $"Rendelés #{CurrentOrder.Id} • {CurrentOrder.Status} • {CurrentOrder.TotalPriceLabel}";
 
     public string SelectedPaymentMethod
     {
@@ -53,9 +53,9 @@ public class PayPageViewModel : BaseViewModel
 
                 StatusMessage = normalized switch
                 {
-                    "cash" => "Confirm cash payment.",
-                    "card" => "Tap the card on the NFC reader to complete payment.",
-                    _ => "Choose a payment method."
+                    "készpénz" => "Készpénzes fizetés megerősítése.",
+                    "kártya" => "Használd a telefon NFC szenzorát a fizetéshez.",
+                    _ => "Válassz fizetési módot."
                 };
             }
         }
@@ -86,18 +86,18 @@ public class PayPageViewModel : BaseViewModel
 
         if (!_nfcPaymentService.IsSupported)
         {
-            StatusMessage = "NFC payment is not supported on this device.";
+            StatusMessage = "Az NFC fizetés nem támogatott az eszközön.";
             await Shell.Current.DisplayAlert("NFC not available", StatusMessage, "OK");
             return;
         }
 
-        StatusMessage = "Waiting for NFC card...";
+        StatusMessage = "Wárakozás a tranzakcióra...";
 
         var scanResult = await _nfcPaymentService.WaitForTapAsync();
         if (!scanResult.IsSuccess)
         {
             StatusMessage = scanResult.Message;
-            await Shell.Current.DisplayAlert("NFC payment", scanResult.Message, "OK");
+            await Shell.Current.DisplayAlert("NFC fizetés", scanResult.Message, "OK");
             return;
         }
 
@@ -119,7 +119,7 @@ public class PayPageViewModel : BaseViewModel
         try
         {
             IsBusy = true;
-            StatusMessage = method == "card" ? "NFC detected. Processing card payment..." : "Processing payment...";
+            StatusMessage = method == "card" ? "NFC érzékelve. Várakozás a kértyára..." : "Várakozás a tranzakcióra...";
 
             var payment = await _apiService.PayOrderAsync(CurrentOrder.Id, new PayOrderRequest
             {
@@ -128,19 +128,19 @@ public class PayPageViewModel : BaseViewModel
 
             CurrentOrder.Status = payment.OrderStatus;
             OnPropertyChanged(nameof(CurrentOrderLabel));
-            StatusMessage = method == "card" ? "Card payment completed successfully." : $"Payment successful with {method}.";
+            StatusMessage = method == "card" ? "Sikeres kártyás fizetés." : $"Fizetés sikeres {method}.";
 
             var successMessage = method == "card"
-                ? $"Order #{CurrentOrder.Id} was paid by card using NFC."
-                : $"Order #{CurrentOrder.Id} was paid by {method}.";
+                ? $"Rendelés #{CurrentOrder.Id} kártyával lett fizetve."
+                : $"Rendelsé #{CurrentOrder.Id} {method}-val lett fizetve.";
 
-            await Shell.Current.DisplayAlert("Success", successMessage, "OK");
+            await Shell.Current.DisplayAlert("Sikeres", successMessage, "OK");
             await Shell.Current.GoToAsync("//tables");
         }
         catch (Exception ex)
         {
             StatusMessage = ex.Message;
-            await Shell.Current.DisplayAlert("Payment error", ex.Message, "OK");
+            await Shell.Current.DisplayAlert("Fizetés error", ex.Message, "OK");
         }
         finally
         {

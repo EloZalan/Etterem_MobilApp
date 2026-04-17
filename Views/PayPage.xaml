@@ -7,7 +7,7 @@
         <VerticalStackLayout Padding="20" Spacing="16">
             <Frame BackgroundColor="{StaticResource BackGroundGraylight}" >
                 <VerticalStackLayout Spacing="8">
-                    <Label Text="Payment" FontAttributes="Bold" FontSize="24" HorizontalOptions="Center" TextColor="White" />
+                    <Label Text="Fizetés" FontAttributes="Bold" FontSize="24" HorizontalOptions="Center" TextColor="White" />
                     <Label Text="{Binding CurrentOrderLabel}" HorizontalOptions="Center" />
                     <Label Text="{Binding StatusMessage}" HorizontalOptions="Center" TextColor="Gray" />
                 </VerticalStackLayout>
@@ -15,13 +15,13 @@
 
             <Frame BackgroundColor="{StaticResource BackGroundGraylight}" IsVisible="{Binding IsCashPaymentVisible}">
                 <VerticalStackLayout Spacing="12" Padding="8">
-                    <Label Text="Pay By Cash"
+                    <Label Text="Fizetés készpénzzel"
                            Margin="0,10,0,0"
                            HorizontalOptions="Center"
                            FontAttributes="Bold"
                            TextColor="White" />
 
-                    <Button Text="Confirm Cash Payment"
+                    <Button Text="Fizetés elfogadása"
                             HorizontalOptions="Center"
                             BackgroundColor="#009E60"
                             TextColor="White"
@@ -33,16 +33,16 @@
 
             <Frame BackgroundColor="{StaticResource BackGroundGraylight}" IsVisible="{Binding IsCardPaymentVisible}">
                 <VerticalStackLayout Spacing="12" Padding="8">
-                    <Label Text="Pay By Card"
+                    <Label Text="Fizetés Kártyával"
                            HorizontalOptions="Center"
                            FontAttributes="Bold"
                            TextColor="White" />
 
-                    <Label Text="Use the device NFC reader. As soon as any NFC card/tag is detected, the payment will complete."
+                    <Label Text="Használd a telefon NFC szenzorát. Érzékelés után megtörténik a fizetés."
                            HorizontalTextAlignment="Center"
                            TextColor="LightGray" />
 
-                    <Button Text="Start NFC Card Payment"
+                    <Button Text="Fizetés indítása"
                             HorizontalOptions="Center"
                             BackgroundColor="#1F51FF"
                             TextColor="White"

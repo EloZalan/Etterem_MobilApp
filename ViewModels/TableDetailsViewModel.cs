@@ -100,8 +100,8 @@ public class TableDetailsViewModel : BaseViewModel
     public bool ShowOpenOrderButton => CurrentOrder is null;
     public bool HasOrderItems => OrderItems.Count > 0;
     public string CurrentOrderLabel => CurrentOrder is null
-        ? "No open order"
-        : $"Order #{CurrentOrder.Id} • {CurrentOrder.Status} • {CurrentOrder.TotalPriceLabel}";
+        ? "Nincs megnyitva az asztal"
+        : $"Rendelés #{CurrentOrder.Id} • {CurrentOrder.Status} • {CurrentOrder.TotalPriceLabel}";
 
     public ICommand LoadCommand { get; }
     public ICommand OpenOrderCommand { get; }
@@ -286,10 +286,10 @@ public class TableDetailsViewModel : BaseViewModel
             return;
 
         var confirm = await Shell.Current.DisplayAlert(
-            "Delete item",
-            $"Delete {item.Name} from the order?",
-            "Yes",
-            "No");
+            "Tétel törlés",
+            $"Törli a(z) {item.Name} a rendelésből?",
+            "Igen",
+            "Nem");
 
         if (!confirm)
             return;
@@ -311,16 +311,16 @@ public class TableDetailsViewModel : BaseViewModel
     {
         if (CurrentOrder is null)
         {
-            StatusMessage = "No order is open.";
+            StatusMessage = "Nincs nyitott rendelés.";
             return;
         }
 
         try
         {
             await _apiService.SimulateReadyAsync(CurrentOrder.Id);
-            CurrentOrder.Status = "ready_to_pay";
+            CurrentOrder.Status = "Fizetésre kész";
             await RefreshOrderDetailsAsync();
-            StatusMessage = "Order marked as ready to pay.";
+            StatusMessage = "Késznek jelentve.";
             RefreshComputedProperties();
         }
         catch (Exception ex)
@@ -333,7 +333,7 @@ public class TableDetailsViewModel : BaseViewModel
     {
         if (CurrentOrder is null)
         {
-            StatusMessage = "Open an order first.";
+            StatusMessage = "Nyiss meg egy rendelést ehhez";
             return;
         }
 

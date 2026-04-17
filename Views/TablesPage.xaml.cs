@@ -60,10 +60,10 @@ public partial class TablesPage : ContentPage
     private async void OnWalkInReservationClicked(object sender, EventArgs e)
     {
         var input = await DisplayPromptAsync(
-            "Walk-in reservation",
-            "Enter guest count:",
+            "Pincér foglalás",
+            "Személyek száma:",
             accept: "OK",
-            cancel: "Cancel",
+            cancel: "Mégse",
             keyboard: Keyboard.Numeric);
 
         if (string.IsNullOrWhiteSpace(input))
@@ -71,7 +71,7 @@ public partial class TablesPage : ContentPage
 
         if (!int.TryParse(input, out var guestCount) || guestCount < 1)
         {
-            await DisplayAlert("Invalid value", "Guest count must be a number greater than 0.", "OK");
+            await DisplayAlert("Hiba", "A megadható személyek száma minimum 1", "OK");
             return;
         }
 

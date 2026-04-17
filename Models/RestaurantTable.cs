@@ -25,6 +25,17 @@ public class RestaurantTable
             ? "No reservation"
             : $"Reserved for {Reservation.GuestCount} guest(s)";
 
-    public string DisplayName => $"Table {Id}";
-    public string Subtitle => $"Capacity: {Capacity} • Status: {Status}";
+    public string DisplayName => $"Asztal {Id}";
+    public string Subtitle => $"Férőhely: {Capacity} fő • Státusz: {Magyaritas(Status)}";
+
+
+    public string Magyaritas( string status)
+    {
+        if (status == "available")
+            return "Szabad";
+        else if (status == "occupied")
+            return "Asztalnál";
+        else
+            return "Foglalt";
+    }
 }
