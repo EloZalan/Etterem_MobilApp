@@ -110,7 +110,7 @@ public class TablesViewModel : BaseViewModel
             return;
 
         var reservationStart = GetReservationStartInLocalTime(table);
-        if (reservationStart.HasValue && reservationStart.Value > DateTime.Now.AddMinutes(20))
+        if (reservationStart.HasValue && reservationStart.Value > DateTime.Now)
         {
             var reservationTimeText = (reservationStart.Value).AddHours(2).ToString("HH:mm");
             await Shell.Current.DisplayAlert(
