@@ -24,6 +24,7 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<IApiService, ApiService>();
         builder.Services.AddSingleton<IAuthService, AuthService>();
+        // MauiProgram.cs – platform-specifikus NFC regisztráció
 #if ANDROID
         builder.Services.AddSingleton<INfcPaymentService, WaiterApp.Platforms.Android.Services.AndroidNfcPaymentService>();
 #else

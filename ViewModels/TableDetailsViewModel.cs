@@ -174,7 +174,7 @@ public class TableDetailsViewModel : BaseViewModel
             }
             else
             {
-                StatusMessage = "Open an order for this table or continue adding items.";
+                StatusMessage = "Nyisd meg a foglalást a továbbiakhoz.";
             }
         }
         catch (Exception ex)
@@ -229,6 +229,7 @@ public class TableDetailsViewModel : BaseViewModel
         if (SelectedTable is null)
             return;
 
+            
         try
         {
             CurrentOrder = await _apiService.OpenOrderForTableAsync(SelectedTable.Id);

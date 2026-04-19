@@ -16,7 +16,7 @@ public class LoginViewModel : BaseViewModel
     {
         _apiService = apiService;
         _authService = authService;
-        Title = "Login";
+        Title = "Bejelentkezés";
         LoginCommand = new Command(async () => await LoginAsync(), () => !IsBusy);
     }
 

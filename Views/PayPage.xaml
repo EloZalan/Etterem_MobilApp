@@ -9,7 +9,6 @@
                 <VerticalStackLayout Spacing="8">
                     <Label Text="Fizetés" FontAttributes="Bold" FontSize="24" HorizontalOptions="Center" TextColor="White" />
                     <Label Text="{Binding CurrentOrderLabel}" HorizontalOptions="Center" />
-                    <Label Text="{Binding StatusMessage}" HorizontalOptions="Center" TextColor="Gray" />
                 </VerticalStackLayout>
             </Frame>
 

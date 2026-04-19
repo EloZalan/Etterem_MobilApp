@@ -35,10 +35,10 @@
                         </HorizontalStackLayout>
                         <HorizontalStackLayout Spacing="9" Padding="10,0,0,0">
                             
-                            <Button ImageSource="refresh.png" 
+                            <!--<Button ImageSource="refresh.png" 
                                 HeightRequest="45" 
                                 WidthRequest="45"
-                                Command="{Binding LoadCommand}" />
+                                Command="{Binding LoadCommand}" />-->
                             <Button ImageSource="logout.png"
                                     BackgroundColor="Red"
                                     HeightRequest="45"

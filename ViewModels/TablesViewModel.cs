@@ -18,7 +18,7 @@ public class TablesViewModel : BaseViewModel
     {
         _apiService = apiService;
         _authService = authService;
-        Title = "My Tables";
+        Title = "Asztalaim";
         Tables = new ObservableCollection<RestaurantTable>();
         LoadCommand = new Command(async () => await LoadAsync());
         LogoutCommand = new Command(async () => await LogoutAsync());
@@ -110,12 +110,12 @@ public class TablesViewModel : BaseViewModel
             return;
 
         var reservationStart = GetReservationStartInLocalTime(table);
-        if (reservationStart.HasValue && reservationStart.Value > DateTime.Now)
+        if (reservationStart.HasValue && reservationStart.Value > DateTime.Now.AddMinutes(20))
         {
             var reservationTimeText = (reservationStart.Value).AddHours(2).ToString("HH:mm");
             await Shell.Current.DisplayAlert(
-                "Reservation not active yet",
-                $"This reservation is for {reservationTimeText}. You cannot open this table yet.",
+                "A foglalás nem aktív",
+                $"A foglalás {reservationTimeText} órára van idõzitve. Még nem tudod megnyitni az asztalt.",
                 "OK");
             return;
         }

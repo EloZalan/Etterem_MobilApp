@@ -47,14 +47,14 @@
                 <VerticalStackLayout Spacing="12">
                     <Label Text="Rendelhető tételek" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" Padding="0,0,0,10" TextColor="White"/>
 
-                    <Picker Title="Category"
+                    <Picker Title="Kategória"
                             ItemsSource="{Binding Categories}"
                             ItemDisplayBinding="{Binding Name}"
                             SelectedItem="{Binding SelectedCategory}" 
                             HorizontalTextAlignment="Center"
                             WidthRequest="250"/>
 
-                    <Picker Title="Menu Item"
+                    <Picker Title="Tételek"
                             ItemsSource="{Binding MenuItems}"
                             ItemDisplayBinding="{Binding Name}"
                             SelectedItem="{Binding SelectedMenuItem}" 

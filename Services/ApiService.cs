@@ -15,7 +15,7 @@ public class ApiService : IApiService
         PropertyNameCaseInsensitive = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
-
+    // ApiService.cs – HTTP kliens inicializálása
     public ApiService()
     {
         _httpClient = new HttpClient
@@ -26,7 +26,7 @@ public class ApiService : IApiService
         _httpClient.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
     }
-
+    // Token beállítása bejelentkezés után:
     public void SetToken(string? token)
     {
         _httpClient.DefaultRequestHeaders.Authorization = string.IsNullOrWhiteSpace(token)
