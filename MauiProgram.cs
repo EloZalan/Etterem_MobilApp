@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Maui;
-using MauiApp1;
 using Microsoft.Extensions.Logging;
 using WaiterApp.Services;
 using WaiterApp.Services.Payments;

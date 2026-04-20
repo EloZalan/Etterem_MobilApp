@@ -1,4 +1,3 @@
-using MauiApp1;
 using Android.App;
 using Android.Content;
 using Android.Nfc;
